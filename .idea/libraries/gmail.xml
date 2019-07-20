@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="gmail">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/src/main/resources/gmail" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/src/main/resources/gmail" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/src/main/resources/gmail" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/src/main/resources/gmail" recursive="false" type="SOURCES" />
+  </library>
+</component>

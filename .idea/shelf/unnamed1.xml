@@ -1,0 +1,14 @@
+<changelist name="unnamed1" date="1563618344654" recycled="false">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/unnamed1/shelved.patch" />
+  <option name="DESCRIPTION" value="" />
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/main/java/DB/demo/Demo.class" />
+    <option name="AFTER_PATH" value="target/classes/main/java/DB/demo/Demo.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/unnamed1/Demo.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/main/java/DB/FirebaseDao.class" />
+    <option name="AFTER_PATH" value="target/classes/main/java/DB/FirebaseDao.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/unnamed1/FirebaseDao.class" />
+  </binary>
+</changelist>

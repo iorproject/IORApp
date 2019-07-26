@@ -31,19 +31,12 @@ public class GmailQuickstart {
 
                     }
                 }
-
             }
 
         }
         catch (Exception e) {
-            
+
         }
-
-
-
-
-        tikaParser.setMaxStringLength(-1);
-
 
 
 //        try {
@@ -71,25 +64,6 @@ public class GmailQuickstart {
 //            String error = e.getMessage();
 //            int d = 4;
 //        }
-
-    }
-
-    private static String getStringFromBytes(byte[] data) {
-
-        String content = null;
-        InputStream inputStream = new ByteArrayInputStream(data);
-        try {
-            content = tikaParser.parseToString(inputStream, metadata);
-            content = content.replaceAll("\r", "")
-                    .replaceAll("\t", "")
-                    .replaceAll("\n +", "\n")
-                    .replaceAll("\n+", "\n");
-        }
-        catch (Exception e) {
-
-        }
-
-        return content;
 
     }
 

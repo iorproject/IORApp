@@ -18,19 +18,19 @@ public class JacksonUtility {
 	
 	
 	/**
-	 * Creates a json-string representing the data provided by the map.
+	 * Creates a json-string representing the bytesData provided by the map.
 	 * 
 	 * @param dataMap; can be null/empty, but will result in an empty String;
 	 * 			otherwise, must be Strings mapped to arbitrary Objects.
-	 * @return the json-string representing the data, or an empty-string; will not return null
-	 * @throws JacksonUtilityException if there was an error converting the map-data into a json-string
+	 * @return the json-string representing the bytesData, or an empty-string; will not return null
+	 * @throws JacksonUtilityException if there was an error converting the map-bytesData into a json-string
 	 */
 	public static String GET_JSON_STRING_FROM_MAP( Map<String, Object> dataMap ) throws JacksonUtilityException {
 	
 		/* NOTE: per Jackson-dox, the map must be of type <String, Object> */
 		
 		if( dataMap == null || dataMap.isEmpty() ) {
-			LOGGER.info( "cannot convert data from map into json when map is null/empty" );
+			LOGGER.info( "cannot convert bytesData from map into json when map is null/empty" );
 			return new String(); // don't want to return null to avoid NPEs
 		}
 		
@@ -42,7 +42,7 @@ public class JacksonUtility {
 			
 		} catch( Throwable t ) {
 			
-			String msg = "unable to convert data from map into json: " + dataMap.toString();
+			String msg = "unable to convert bytesData from map into json: " + dataMap.toString();
 			LOGGER.warn( msg );
 			throw new JacksonUtilityException( msg );
 			
@@ -53,12 +53,12 @@ public class JacksonUtility {
 	
 
 	/**
-	 * Creates a map represented by the json-data provided.
+	 * Creates a map represented by the json-bytesData provided.
 	 * 
 	 * @param jsonResponse; can be null/empty, but will result in an empty-map;
 	 * @return Strings mapped to arbitrary Objects
 	 * 
-	 * @throws JacksonUtilityException if there was an error converting the json-string into map-data
+	 * @throws JacksonUtilityException if there was an error converting the json-string into map-bytesData
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> GET_JSON_STRING_AS_MAP( String jsonResponse ) throws JacksonUtilityException {

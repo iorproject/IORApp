@@ -97,7 +97,7 @@ public class Firebase {
 
 
 	/**
-	 * GETs data from the base-url.
+	 * GETs bytesData from the base-url.
 	 * 
 	 * @return {@link FirebaseResponse}
 	 * @throws UnsupportedEncodingException 
@@ -108,7 +108,7 @@ public class Firebase {
 	}
 	
 	/**
-	 * GETs data from the provided-path relative to the base-url.
+	 * GETs bytesData from the provided-path relative to the base-url.
 	 * 
 	 * @param path -- if null/empty, refers to the base-url
 	 * @return {@link FirebaseResponse}
@@ -129,7 +129,7 @@ public class Firebase {
 	}
 	
 	/**
-	 * PATCHs data to the base-url
+	 * PATCHs bytesData to the base-url
 	 * 
 	 * @param data -- can be null/empty
 	 * @return
@@ -143,7 +143,7 @@ public class Firebase {
 	}
 	
 	/**
-	 * PATCHs data on the provided-path relative to the base-url.
+	 * PATCHs bytesData on the provided-path relative to the base-url.
 	 * 
 	 * @param path -- if null/empty, refers to the base-url
 	 * @param data -- can be null/empty
@@ -202,9 +202,9 @@ public class Firebase {
 	}
 	
 	/**
-	 * PUTs data to the base-url (ie: creates or overwrites).
-	 * If there is already data at the base-url, this data overwrites it.
-	 * If data is null/empty, any data existing at the base-url is deleted.
+	 * PUTs bytesData to the base-url (ie: creates or overwrites).
+	 * If there is already bytesData at the base-url, this bytesData overwrites it.
+	 * If bytesData is null/empty, any bytesData existing at the base-url is deleted.
 	 * 
 	 * @param data -- can be null/empty
 	 * @return {@link FirebaseResponse}
@@ -217,9 +217,9 @@ public class Firebase {
 	}
 	
 	/**
-	 * PUTs data to the provided-path relative to the base-url (ie: creates or overwrites).
-	 * If there is already data at the path, this data overwrites it.
-	 * If data is null/empty, any data existing at the path is deleted.
+	 * PUTs bytesData to the provided-path relative to the base-url (ie: creates or overwrites).
+	 * If there is already bytesData at the path, this bytesData overwrites it.
+	 * If bytesData is null/empty, any bytesData existing at the path is deleted.
 	 * 
 	 * @param path -- if null/empty, refers to base-url
 	 * @param data -- can be null/empty
@@ -243,9 +243,9 @@ public class Firebase {
 	}
 	
 	/**
-	 * PUTs data to the provided-path relative to the base-url (ie: creates or overwrites).
-	 * If there is already data at the path, this data overwrites it.
-	 * If data is null/empty, any data existing at the path is deleted.
+	 * PUTs bytesData to the provided-path relative to the base-url (ie: creates or overwrites).
+	 * If there is already bytesData at the path, this bytesData overwrites it.
+	 * If bytesData is null/empty, any bytesData existing at the path is deleted.
 	 * 
 	 * @param jsonData -- can be null/empty
 	 * @return {@link FirebaseResponse}
@@ -257,9 +257,9 @@ public class Firebase {
 	}
 
 	/**
-	 * PUTs data to the provided-path relative to the base-url (ie: creates or overwrites).
-	 * If there is already data at the path, this data overwrites it.
-	 * If data is null/empty, any data existing at the path is deleted.
+	 * PUTs bytesData to the provided-path relative to the base-url (ie: creates or overwrites).
+	 * If there is already bytesData at the path, this bytesData overwrites it.
+	 * If bytesData is null/empty, any bytesData existing at the path is deleted.
 	 * 
 	 * @param path -- if null/empty, refers to base-url
 	 * @param jsonData -- can be null/empty
@@ -282,14 +282,14 @@ public class Firebase {
 	}
 	
 	/**
-	 * POSTs data to the base-url (ie: creates).
+	 * POSTs bytesData to the base-url (ie: creates).
 	 * 
 	 * NOTE: the Firebase API does not treat this method in the conventional way, but instead defines it
-	 * as 'PUSH'; the API will insert this data under the base-url but associated with a Firebase-
-	 * generated key; thus, every use of this method will result in a new insert even if the data already 
+	 * as 'PUSH'; the API will insert this bytesData under the base-url but associated with a Firebase-
+	 * generated key; thus, every use of this method will result in a new insert even if the bytesData already
 	 * exists.
 	 * 
-	 * @param data -- can be null/empty but will result in no data being POSTed
+	 * @param data -- can be null/empty but will result in no bytesData being POSTed
 	 * @return {@link FirebaseResponse}
 	 * @throws UnsupportedEncodingException 
 	 * @throws {@link JacksonUtilityException}
@@ -300,15 +300,15 @@ public class Firebase {
 	}
 	
 	/**
-	 * POSTs data to the provided-path relative to the base-url (ie: creates).
+	 * POSTs bytesData to the provided-path relative to the base-url (ie: creates).
 	 * 
 	 * NOTE: the Firebase API does not treat this method in the conventional way, but instead defines it
-	 * as 'PUSH'; the API will insert this data under the provided path but associated with a Firebase-
+	 * as 'PUSH'; the API will insert this bytesData under the provided path but associated with a Firebase-
 	 * generated key; thus, every use of this method will result in a new insert even if the provided path
-	 * and data already exist.
+	 * and bytesData already exist.
 	 * 
 	 * @param path -- if null/empty, refers to base-url
-	 * @param data -- can be null/empty but will result in no data being POSTed
+	 * @param data -- can be null/empty but will result in no bytesData being POSTed
 	 * @return {@link FirebaseResponse}
 	 * @throws UnsupportedEncodingException 
 	 * @throws {@link JacksonUtilityException}
@@ -329,14 +329,14 @@ public class Firebase {
 	}
 	
 	/**
-	 * POSTs data to the base-url (ie: creates).
+	 * POSTs bytesData to the base-url (ie: creates).
 	 * 
 	 * NOTE: the Firebase API does not treat this method in the conventional way, but instead defines it
-	 * as 'PUSH'; the API will insert this data under the base-url but associated with a Firebase-
-	 * generated key; thus, every use of this method will result in a new insert even if the provided data 
+	 * as 'PUSH'; the API will insert this bytesData under the base-url but associated with a Firebase-
+	 * generated key; thus, every use of this method will result in a new insert even if the provided bytesData
 	 * already exists.
 	 * 
-	 * @param jsonData -- can be null/empty but will result in no data being POSTed
+	 * @param jsonData -- can be null/empty but will result in no bytesData being POSTed
 	 * @return {@link FirebaseResponse}
 	 * @throws UnsupportedEncodingException 
 	 * @throws {@link FirebaseException}
@@ -346,15 +346,15 @@ public class Firebase {
 	}
 	
 	/**
-	 * POSTs data to the provided-path relative to the base-url (ie: creates).
+	 * POSTs bytesData to the provided-path relative to the base-url (ie: creates).
 	 * 
 	 * NOTE: the Firebase API does not treat this method in the conventional way, but instead defines it
-	 * as 'PUSH'; the API will insert this data under the provided path but associated with a Firebase-
+	 * as 'PUSH'; the API will insert this bytesData under the provided path but associated with a Firebase-
 	 * generated key; thus, every use of this method will result in a new insert even if the provided path
-	 * and data already exist.
+	 * and bytesData already exist.
 	 * 
 	 * @param path -- if null/empty, refers to base-url
-	 * @param jsonData -- can be null/empty but will result in no data being POSTed
+	 * @param jsonData -- can be null/empty but will result in no bytesData being POSTed
 	 * @return {@link FirebaseResponse}
 	 * @throws UnsupportedEncodingException 
 	 * @throws {@link FirebaseException}
@@ -387,7 +387,7 @@ public class Firebase {
 	}
 	
 	/**
-	 * DELETEs data from the base-url.
+	 * DELETEs bytesData from the base-url.
 	 * 
 	 * @return {@link FirebaseResponse}
 	 * @throws UnsupportedEncodingException 
@@ -398,7 +398,7 @@ public class Firebase {
 	}
 
 	/**
-	 * DELETEs data from the provided-path relative to the base-url.
+	 * DELETEs bytesData from the provided-path relative to the base-url.
 	 * 
 	 * @param path -- if null/empty, refers to the base-url
 	 * @return {@link FirebaseResponse}
@@ -443,7 +443,7 @@ public class Firebase {
 			
 		} catch( Throwable t ) {
 			
-			String msg = "unable to create entity from data; data was: " + jsonData;
+			String msg = "unable to create entity from bytesData; bytesData was: " + jsonData;
 			LOGGER.error( msg );
 			throw new FirebaseException( msg, t );
 			

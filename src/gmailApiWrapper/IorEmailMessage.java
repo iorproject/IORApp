@@ -20,8 +20,6 @@ public class IorEmailMessage implements IEmailMessage {
         this.date = date;
         this.content = content;
         this.attachments = attachments;
-
-
     }
 
     @Override

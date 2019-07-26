@@ -23,12 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class GmailApiWrapper {
+public class GmailApiWrapper implements IEmailApiWrapper {
 
     private static final String APPLICATION_NAME = "Gmail API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance(); //JacksonFactory.getDefaultInstance();
@@ -50,8 +51,17 @@ public class GmailApiWrapper {
     private static final String CLIENT_SECRET="6C2okEplSBNFI8CQ9sr_m6gO";
     private static final String CLIENT_ID="745146810127-qr5uhgmubru7mv835ftqb28mh9onerrh.apps.googleusercontent.com";
 
+    private final String userId;
+    private final String accessToken;
+    private final String refreshToken;
 
-    public GmailApiWrapper() throws GeneralSecurityException, IOException {
+
+
+    public GmailApiWrapper(String userId, String accessToken, String refreshToken) throws GeneralSecurityException, IOException {
+
+        this.userId = userId;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
 
         HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         if (ACCESS_TOKEN != null) {
@@ -61,6 +71,18 @@ public class GmailApiWrapper {
         }
         performRequest(HTTP_TRANSPORT, CLIENT_ID, CLIENT_SECRET, ACCESS_TOKEN, REFRESH_TOKEN);
     }
+
+
+//    public GmailApiWrapper() throws GeneralSecurityException, IOException {
+//
+//        HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+//        if (ACCESS_TOKEN != null) {
+//            service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+//                    .setApplicationName(APPLICATION_NAME)
+//                    .build();
+//        }
+//        performRequest(HTTP_TRANSPORT, CLIENT_ID, CLIENT_SECRET, ACCESS_TOKEN, REFRESH_TOKEN);
+//    }
 
 
     private void performRequest(final NetHttpTransport HTTP_TRANSPORT, String clientId, String clientSecret,String accessToken, String refreshToken) throws IOException {
@@ -75,7 +97,6 @@ public class GmailApiWrapper {
                                 .setApplicationName(APPLICATION_NAME)
                                 .build();
             }
-
 
 
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
@@ -97,33 +118,33 @@ public class GmailApiWrapper {
     }
 
 
-    public List<IEmailMessage> getMessages(String userId) throws IOException{
-
-        List<IEmailMessage> results = new ArrayList<>();
-        List<Message> messages = getGmailMessages(userId);
-        for (Message m : messages) {
-            List<MessagePartHeader> headers = m.getPayload().getHeaders();
-
-            String subject = headers.stream().filter(h -> h.getName().equals("Subject")).collect(Collectors.toList()).get(0).getValue();
-            String date = headers.stream().filter(h -> h.getName().equals("Date")).collect(Collectors.toList()).get(0).getValue();
-            String from = headers.stream().filter(h -> h.getName().equals("From")).collect(Collectors.toList()).get(0).getValue();
-            from = from.substring(from.indexOf('<') + 1, from.lastIndexOf('>'));
-
-            String body = getBody(m);
-            if (body != null) {
-                body = StringUtils.newStringUtf8(Base64.decodeBase64(body));
-                if (m.getPayload().getMimeType().equals("text/html")) {
-                    body = Jsoup.parse(body).text();
-                }
-                String[] lines = body.replaceAll("\r", "").split("\n");
-            }
-            List<Attachment> attachments = getAttachments(m, service, userId);
-            results.add(new IorEmailMessage(m.getId(), subject
-                    , from, date, body, attachments));
-        }
-
-        return results;
-    }
+//    public List<IEmailMessage> getMessages(String userId) throws IOException{
+//
+//        List<IEmailMessage> results = new ArrayList<>();
+//        List<Message> messages = getGmailMessages(userId);
+//        for (Message m : messages) {
+//            List<MessagePartHeader> headers = m.getPayload().getHeaders();
+//
+//            String subject = headers.stream().filter(h -> h.getName().equals("Subject")).collect(Collectors.toList()).get(0).getValue();
+//            String date = headers.stream().filter(h -> h.getName().equals("Date")).collect(Collectors.toList()).get(0).getValue();
+//            String from = headers.stream().filter(h -> h.getName().equals("From")).collect(Collectors.toList()).get(0).getValue();
+//            from = from.substring(from.indexOf('<') + 1, from.lastIndexOf('>'));
+//
+//            String body = getBody(m);
+//            if (body != null) {
+//                body = StringUtils.newStringUtf8(Base64.decodeBase64(body));
+//                if (m.getPayload().getMimeType().equals("text/html")) {
+//                    body = Jsoup.parse(body).text();
+//                }
+//                String[] lines = body.replaceAll("\r", "").split("\n");
+//            }
+//            List<Attachment> attachments = getAttachments(m, service, userId);
+//            results.add(new IorEmailMessage(m.getId(), subject
+//                    , from, date, body, attachments));
+//        }
+//
+//        return results;
+//    }
 
 //    public static void main(String... args) throws IOException, GeneralSecurityException {
 //        // Build a new authorized API client service.
@@ -144,7 +165,7 @@ public class GmailApiWrapper {
 //        }
 
 
-    private List<Message> getGmailMessages(String userId) throws IOException {
+    private List<Message> getGmailMessages() throws IOException {
 
 
         ListMessagesResponse response = service.users().messages().list(userId)
@@ -222,15 +243,15 @@ public class GmailApiWrapper {
         return res;
     }
 
-    private List<Attachment> getAttachments(Message message, Gmail service, String userId) {
+    private List<EmailAttachment> getAttachments(Message message) {
 
-        List<Attachment> attachments = new ArrayList<>();
+        List<EmailAttachment> attachments = new ArrayList<>();
         String messageId = message.getId();
 
         if (message.getPayload() != null && message.getPayload().getParts() != null) {
             List<MessagePart> parts = message.getPayload().getParts();
             for (MessagePart part : parts) {
-                getAttachmentsHelper(part, service, userId, messageId, attachments);
+                getAttachmentsHelper(part, messageId, attachments);
             }
         }
 
@@ -238,14 +259,14 @@ public class GmailApiWrapper {
     }
 
 
-    private void getAttachmentsHelper(MessagePart part, Gmail service, String userId, String messageId, List<Attachment> attachments) {
+    private void getAttachmentsHelper(MessagePart part, String messageId, List<EmailAttachment> attachments) {
 
         if (part.getParts() != null) {
 
             List<MessagePart> parts = part.getParts();
             for (MessagePart part1 : parts) {
 
-                getAttachmentsHelper(part1, service, userId, messageId, attachments);
+                getAttachmentsHelper(part1, messageId, attachments);
             }
         }
         else {
@@ -255,17 +276,20 @@ public class GmailApiWrapper {
                 String attId = part.getBody().getAttachmentId();
                 String fileName = part.getFilename();
                 FileFormat type = FileFormat.valueOf(fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase());
-                attachments.add(new Attachment(fileName, attId, type));
+                GmailAttachment attachment = new GmailAttachment(fileName, attId, type);
+                attachment.setEmailApiWrapper(this);
+                attachment.setGmailMessage(messageId);
+                attachments.add(attachment);
             }
         }
     }
 
-    public byte[] getAttachmentBytes(Attachment attachment, String userId, IEmailMessage message) {
+    public byte[] getAttachmentBytes(String attachmentId, String messageId) {
 
         MessagePartBody attachPart = null;
         try {
             attachPart = service.users().messages().attachments().
-                    get(userId, message.getId(), attachment.getId()).execute();
+                    get(userId, messageId, attachmentId).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -289,5 +313,46 @@ public class GmailApiWrapper {
         byte[] fileByteArray = Base64.decodeBase64(attachPart.getData());
 
         return fileByteArray;
+    }
+
+
+    @Override
+    public List<EmailMessage> getMessages() throws Exception {
+        List<EmailMessage> results = new ArrayList<>();
+        List<Message> messages = getGmailMessages();
+        for (Message m : messages) {
+            EmailMessage gmailMessage = new GmailMessage(m.getId());
+            List<MessagePartHeader> headers = m.getPayload().getHeaders();
+
+            String subject = headers.stream().filter(h -> h.getName().equals("Subject")).collect(Collectors.toList()).get(0).getValue();
+            String dateStr = headers.stream().filter(h -> h.getName().equals("Date")).collect(Collectors.toList()).get(0).getValue();
+            dateStr = dateStr.substring(0, dateStr.lastIndexOf(' '));
+            SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss"
+                    , Locale.US);
+            Date date = formatter.parse(dateStr);
+
+            String from = headers.stream().filter(h -> h.getName().equals("From")).collect(Collectors.toList()).get(0).getValue();
+            from = from.substring(from.indexOf('<') + 1, from.lastIndexOf('>'));
+
+            gmailMessage.setSubject(subject);
+            gmailMessage.setDate(date);
+            gmailMessage.setFrom(from);
+
+
+            String body = getBody(m);
+            if (body != null) {
+                body = StringUtils.newStringUtf8(Base64.decodeBase64(body));
+                if (m.getPayload().getMimeType().equals("text/html")) {
+                    body = Jsoup.parse(body).text();
+                }
+            }
+
+            gmailMessage.setContent(body);
+            List<EmailAttachment> attachments = getAttachments(m);
+            gmailMessage.setAttachments(attachments);
+            results.add(gmailMessage);
+        }
+
+        return results;
     }
 }

@@ -68,7 +68,7 @@ public class FirebaseResponse {
 	}
 	
 	/**
-	 * Returns a map of the data returned by the Firebase-client
+	 * Returns a map of the bytesData returned by the Firebase-client
 	 * 
 	 * @return a map of Strings to Objects
 	 */
@@ -77,7 +77,7 @@ public class FirebaseResponse {
 	}
 	
 	/**
-	 * Returns the raw data response returned by the Firebase-client
+	 * Returns the raw bytesData response returned by the Firebase-client
 	 * 
 	 * @return a String of the JSON-response from the client
 	 */

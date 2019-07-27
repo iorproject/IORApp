@@ -10,6 +10,23 @@ import java.util.Date;
 import java.util.List;
 
 public class DBHandler implements  ReceiptsDAO{
+    private static DBHandler dbHandler;
+    private static Object lockObject = new Object();
+
+    private DBHandler() throws FirebaseException {
+    }
+
+    public static DBHandler getInstance() throws FirebaseException {
+        if(dbHandler == null){
+            synchronized (lockObject){
+                if(dbHandler == null){
+                    dbHandler = new DBHandler();
+                }
+            }
+        }
+        return dbHandler;
+    }
+
     @Override
     public ApproveIndicator getApprovalIndicators() throws UnsupportedEncodingException, FirebaseException {
         return FirebaseDao.getInstance().getApprovalIndicators();

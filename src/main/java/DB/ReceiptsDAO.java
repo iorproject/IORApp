@@ -3,6 +3,7 @@ package main.java.DB;
 import dbObjects.ApproveIndicator;
 import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.TotalIndicator;
+import main.java.DB.Entities.User;
 import main.java.DB.error.FirebaseException;
 import main.java.DB.error.JacksonUtilityException;
 
@@ -18,4 +19,6 @@ public interface ReceiptsDAO {
     void setLastSearchMailTime(String email, Date lastUpdatedSearchTime) throws UnsupportedEncodingException, FirebaseException;
     Date getLastSearchMailTime(String email) throws UnsupportedEncodingException, FirebaseException;
     void insertReceipt(Receipt receipt) throws UnsupportedEncodingException, FirebaseException;
+    List<User> getAllUsers() throws UnsupportedEncodingException, FirebaseException;
+    void registerUser(User user) throws UnsupportedEncodingException, FirebaseException, JacksonUtilityException;
 }

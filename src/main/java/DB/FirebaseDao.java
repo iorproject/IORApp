@@ -2,9 +2,7 @@ package main.java.DB;
 
 import com.google.gson.Gson;
 import dbObjects.ApproveIndicator;
-import main.java.DB.Entities.Receipt;
-import main.java.DB.Entities.TotalIndicator;
-import main.java.DB.Entities.UserReceipts;
+import main.java.DB.Entities.*;
 import main.java.DB.error.FirebaseException;
 import main.java.DB.error.JacksonUtilityException;
 import main.java.DB.model.FirebaseResponse;
@@ -37,11 +35,15 @@ public class FirebaseDao implements ReceiptsDAO{
 
     private String encodeString(String insertedData){
 
-        return insertedData.replaceAll("\\.","_!_").replaceAll("/","___");
+        return insertedData
+                .replaceAll("\\.","_!_")
+                .replaceAll("/","___");
     }
 
     private String decodeString(String retrievedData){
-        return retrievedData.replaceAll("_!_",".").replaceAll("___","/");
+        return retrievedData
+                .replaceAll("_!_",".")
+                .replaceAll("___","/");
     }
 
     @Override
@@ -69,7 +71,7 @@ public class FirebaseDao implements ReceiptsDAO{
     @Override
     public List<Receipt> getUserReceipts(String email) throws UnsupportedEncodingException, FirebaseException{
         email = encodeString(email);
-        final String userReceipts = "Users/" + email;
+        final String userReceipts = "Users/receipts/" + email;
         response = firebase.get( userReceipts );
         System.out.println( "\n\nResult of GET (for the test-PUT):\n" + response );
         System.out.println("\n");
@@ -87,10 +89,8 @@ public class FirebaseDao implements ReceiptsDAO{
     @Override
     public List<Receipt> getCompanyReceiptsByUser(String email,final String company) throws UnsupportedEncodingException, FirebaseException{
         email = encodeString(email);
-        final String userCompanyReceipts = "Users/" + email;
+        final String userCompanyReceipts = "Users/receipts/" + email;
         response = firebase.get(userCompanyReceipts);
-        System.out.println( "\n\nResult of GET (for the test-PUT):\n" + response );
-        System.out.println("\n");
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
         UserReceipts receipts = json.fromJson(decodeString,UserReceipts.class);
@@ -103,14 +103,14 @@ public class FirebaseDao implements ReceiptsDAO{
     @Override
     public void setLastSearchMailTime(String email, Date lastUpdatedSearchTime) throws UnsupportedEncodingException, FirebaseException {
         email = encodeString(email);
-        final String userCompanyReceipts = "Users/" + email + "/LastUpdatedSearchTime";
+        final String userCompanyReceipts = "Users/receipts/" + email + "/LastUpdatedSearchTime";
         response = firebase.put(userCompanyReceipts,new Gson().toJson(lastUpdatedSearchTime));
     }
 
     @Override
     public Date getLastSearchMailTime(String email) throws UnsupportedEncodingException, FirebaseException {
         email = encodeString(email);
-        final String userCompanyReceipts = "Users/" + email + "/LastUpdatedSearchTime";
+        final String userCompanyReceipts = "Users/receipts/" + email + "/LastUpdatedSearchTime";
         response = firebase.get(userCompanyReceipts);
         Gson json = new Gson();
         return json.fromJson(response.getRawBody(),Date.class);
@@ -128,11 +128,45 @@ public class FirebaseDao implements ReceiptsDAO{
         return  receipt;
     }
 
+    private User encodeUser(User user){
+        user.setAccessToken(encodeString(user.getAccessToken()));
+        user.setRefreshToken(encodeString(user.getRefreshToken()));
+        user.setEmail(encodeString(user.getEmail()));
+        return  user;
+    }
+
+    private User decodeUser(User user){
+        user.setAccessToken(decodeString(user.getAccessToken()));
+        user.setRefreshToken(decodeString(user.getRefreshToken()));
+        user.setEmail(decodeString(user.getEmail()));
+        return  user;
+    }
+
     @Override
     public void insertReceipt(Receipt receipt) throws UnsupportedEncodingException, FirebaseException {
         receipt = encodeReceipt(receipt);
-        final String userCompanyReceipts = "Users/" + receipt.getEmail() + "/companyList/" + receipt.getCompanyName();
+        final String userCompanyReceipts = "Users/receipts/" + receipt.getEmail() + "/companyList/" + receipt.getCompanyName();
         response = firebase.post(userCompanyReceipts,new Gson().toJson(receipt));
         getCompanyReceiptsByUser(receipt.getEmail(),receipt.getCompanyName());
+    }
+
+    @Override
+    public List<User> getAllUsers() throws UnsupportedEncodingException, FirebaseException {
+        final String userPath = "Users";
+        response = firebase.get(userPath);
+        Gson json = new Gson();
+        CredentialsResponse credentialsResponse = json.fromJson(response.getRawBody(),CredentialsResponse.class);
+        return credentialsResponse.getCredentials().values().stream()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void registerUser(User user) throws UnsupportedEncodingException, FirebaseException, JacksonUtilityException {
+        user = encodeUser(user);
+        final String userCredentialsPath = "Users/credentials/" + user.getEmail();
+        response = firebase.patch(userCredentialsPath,new Gson().toJson(user));
+        System.out.println( "\n\nResult of GET (for the test-PUT):\n" + response );
+        System.out.println("\n");
+        getAllUsers();
     }
 }

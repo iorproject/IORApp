@@ -3,7 +3,9 @@ package main.java.DB;
 import dbObjects.ApproveIndicator;
 import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.TotalIndicator;
+import main.java.DB.Entities.User;
 import main.java.DB.error.FirebaseException;
+import main.java.DB.error.JacksonUtilityException;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -60,5 +62,15 @@ public class DBHandler implements  ReceiptsDAO{
     @Override
     public void insertReceipt(Receipt receipt) throws UnsupportedEncodingException, FirebaseException {
         FirebaseDao.getInstance().insertReceipt(receipt);
+    }
+
+    @Override
+    public List<User> getAllUsers() throws UnsupportedEncodingException, FirebaseException {
+        return FirebaseDao.getInstance().getAllUsers();
+    }
+
+    @Override
+    public void registerUser(User user) throws UnsupportedEncodingException, FirebaseException, JacksonUtilityException {
+        FirebaseDao.getInstance().registerUser(user);
     }
 }

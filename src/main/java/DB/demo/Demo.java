@@ -6,6 +6,7 @@ import java.util.*;
 import dbObjects.ApproveIndicator;
 import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.TotalIndicator;
+import main.java.DB.Entities.User;
 import main.java.DB.FirebaseDao;
 import main.java.DB.error.FirebaseException;
 import main.java.DB.error.JacksonUtilityException;
@@ -28,9 +29,15 @@ public class Demo {
 
         byte[] bytes = "omer".getBytes();
         Receipt r = new Receipt("AliExpress","omerblechman@gmail.com","UTF-8",bytes,"10/10/13",30,300);
-		FirebaseDao firebaseDao = FirebaseDao.getInstance();
+        User user = new User("omer@gmail.com","111","1111");
+        FirebaseDao firebaseDao = FirebaseDao.getInstance();
 		firebaseDao.insertReceipt(r);
-
+        Map<String, Object> dataMap = new LinkedHashMap<String, Object>();
+        Map<String, Object> dataMap2 = new LinkedHashMap<String, Object>();
+        dataMap2.put("accessToken","111");
+        dataMap2.put("refreshToken","1111");
+        dataMap.put("omer@gmail.com",dataMap2);
+        firebaseDao.registerUser(user);
 
 /*
 		// create the firebase

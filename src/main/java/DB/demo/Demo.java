@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 import dbObjects.ApproveIndicator;
+import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.TotalIndicator;
 import main.java.DB.FirebaseDao;
 import main.java.DB.error.FirebaseException;
@@ -21,12 +22,17 @@ public class Demo {
 
 		
 		// get the base-url (ie: 'http://gamma.firebase.com/username')
-		final String firebase_baseUrl = "https://iorproject.firebaseio.com/";
 
 		// get the api-key (ie: 'tR7u9Sqt39qQauLzXmRycXag18Z2')
 		final String firebase_apiKey = "AAAAFx7lSQ8:APA91bHgHuEV0G6OMtAzLdPdS0rHlE3EizFM_DuVQXvfgscTM-gbVeuIcLK3gZcLGIis2B1YkePVO0qC4rBwLGHsyEt57B5lKh6bSEg6-UiCN8yAekCZeZjTBQhjDnLZvvmXrpYRYzd2";
 
+        byte[] bytes = "omer".getBytes();
+        Receipt r = new Receipt("AliExpress","omerblechman@gmail.com","UTF-8",bytes,"10/10/13",30,300);
+		FirebaseDao firebaseDao = FirebaseDao.getInstance();
+		firebaseDao.insertReceipt(r);
 
+
+/*
 		// create the firebase
 		Firebase firebase = new Firebase( firebase_baseUrl );
 
@@ -76,7 +82,7 @@ public class Demo {
         dataMap5.put("קוד מוצר",5);
 
         dataMap5.put("חשבונית מס___קבלה",30);
-        dataMap5.put("עסקה___קבלה",20);
+        dataMap5.put("עסקה___קבלה",20);*/
 /*
 
 		// "PUT" (test-map into the fb4jDemo-root)
@@ -193,13 +199,13 @@ public class Demo {
         dataMap.put("15",dataMap3);
         dataMap.put("5",dataMap4);
         dataMap.put("20",dataMap5);*/
-        firebase.put( "Identicators/approvalList", dataMap5 );
+      //  firebase.put( "Identicators/approvalList", dataMap5 );
         /*response = firebase.get( "Identicators/Totals");
         System.out.println(response);*/
         //firebase.put( "Identicators/approvals", dataMap5 );
-        FirebaseDao dao = FirebaseDao.getInstance();
+       /* FirebaseDao dao = FirebaseDao.getInstance();
         ApproveIndicator d = dao.getApprovalIndicators();
-        System.out.println(d);
+        System.out.println(d);*/
         // "PUT" (test-map into a sub-node off of the fb4jDemo-root)
 /*
 		dataMap = new LinkedHashMap<String, Object>();

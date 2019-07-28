@@ -64,11 +64,12 @@ public class GmailApiWrapper implements IEmailApiWrapper {
         this.refreshToken = refreshToken;
 
         HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        if (ACCESS_TOKEN != null) {
+        /*if (ACCESS_TOKEN != null) {
             service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
-        }
+        }*/
+        //TODO: replace ACCESS_TOKEN AND REFRESH_TOKEN in accessToken and refreshToken
         performRequest(HTTP_TRANSPORT, CLIENT_ID, CLIENT_SECRET, ACCESS_TOKEN, REFRESH_TOKEN);
     }
 

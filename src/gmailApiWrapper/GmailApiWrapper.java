@@ -48,8 +48,8 @@ public class GmailApiWrapper implements IEmailApiWrapper {
     private final NetHttpTransport HTTP_TRANSPORT;
     private static final String ACCESS_TOKEN="ya29.GlxLByUeM22BYo-TmzwSSC6LSCWH_4naMi3J_TkOngflJQIzM3jz7tZBtUesOPRvoK_X-KsrfoXnIXh7gSYg1IeHgEC9kr09-f1Tfi_AkLywNSZfmqseuRLXJESZUg";
     private static final String REFRESH_TOKEN="1/l60RQ1WQINlbcsDvmONwDPiTjt88lWx29BvSwdaJJw8";
-    private static final String CLIENT_SECRET="6C2okEplSBNFI8CQ9sr_m6gO";
-    private static final String CLIENT_ID="745146810127-qr5uhgmubru7mv835ftqb28mh9onerrh.apps.googleusercontent.com";
+    private static final String CLIENT_SECRET="VsT2YNjAbH6WgVrhwiE7JlKw";
+    private static final String CLIENT_ID="82521020889-gepgorji8252381j18ii2kd5cb20igsg.apps.googleusercontent.com";
 
     private final String userId;
     private final String accessToken;
@@ -64,12 +64,14 @@ public class GmailApiWrapper implements IEmailApiWrapper {
         this.refreshToken = refreshToken;
 
         HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        if (ACCESS_TOKEN != null) {
-            service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                    .setApplicationName(APPLICATION_NAME)
-                    .build();
+        if (accessToken != null) {
+///*
+//            service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+//                    .setApplicationName(APPLICATION_NAME)
+//                    .build();
         }
-        performRequest(HTTP_TRANSPORT, CLIENT_ID, CLIENT_SECRET, ACCESS_TOKEN, REFRESH_TOKEN);
+
+        performRequest(HTTP_TRANSPORT, CLIENT_ID, CLIENT_SECRET, accessToken, refreshToken);
     }
 
 

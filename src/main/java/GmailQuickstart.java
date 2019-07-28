@@ -8,7 +8,7 @@ import java.util.List;
 
 public class GmailQuickstart {
 
-    private static final String USER = "omerblechman@gmail.com";
+    private static final String USER = "ior46800@gmail.com";
     private static Tika tikaParser = new Tika();  // for get the string from byte[]. external jar.
     private static Metadata metadata = new Metadata();  // for get the string from byte[]. external jar.
 
@@ -17,7 +17,8 @@ public class GmailQuickstart {
 
         try {
             IEmailApiWrapper wrapper = EmailApiWrapperFactory.createEmailApiWrapper(eEmailApi.GMAIL
-                    , USER, "Dsdasdas", "dasdsad");
+                    , USER, "ya29.GltTB49TCKMmKuuZ--9oyap3IG3G0J_GmE9_suzgSx9OBnKDuwieMe054hDIgMP39yiSg12IyIoBYTpD-drCO4tkFd1vedfEWPkBr4OeVosrT_tHlPuXGMJzYtpy",
+                    "1/hzVLripZb7bUDRHJ-9O2qCoCsIsYv-QuWHm_zGH93PwyxMnR6NpqRbisQ-0bVx68");
 
 
             List<EmailMessage> messages = wrapper.getMessages();
@@ -27,14 +28,17 @@ public class GmailQuickstart {
 
                     for (EmailAttachment att : message.getAttachments()) {
 
-
+                            String str = att.getString();
+                            int x = 5;
 
                     }
                 }
             }
-
         }
         catch (Exception e) {
+
+            int x= 5;
+
 
         }
 

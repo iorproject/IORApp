@@ -1,12 +1,19 @@
 package gmailApiWrapper;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.RefreshTokenRequest;
+import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleRefreshTokenRequest;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.BasicAuthentication;
+import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -34,6 +41,7 @@ public class GmailApiWrapper implements IEmailApiWrapper {
     private static final String APPLICATION_NAME = "Gmail API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance(); //JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "/tokens";
+    private static final int TOKEN_EXPIRE = 401;
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -42,19 +50,20 @@ public class GmailApiWrapper implements IEmailApiWrapper {
     private static final List<String> SCOPES = Arrays.asList("https://mail.google.com/",
             "https://www.googleapis.com/auth/gmail.modify", "https://www.googleapis.com/auth/gmail.readonly"
             , GmailScopes.GMAIL_LABELS);
-    private static final String CREDENTIALS_FILE_PATH = "credentials.json";
+    //private static final String CREDENTIALS_FILE_PATH = "credentials.json";
 
     private Gmail service;
     private final NetHttpTransport HTTP_TRANSPORT;
-    private static final String ACCESS_TOKEN="ya29.GlxLByUeM22BYo-TmzwSSC6LSCWH_4naMi3J_TkOngflJQIzM3jz7tZBtUesOPRvoK_X-KsrfoXnIXh7gSYg1IeHgEC9kr09-f1Tfi_AkLywNSZfmqseuRLXJESZUg";
-    private static final String REFRESH_TOKEN="1/l60RQ1WQINlbcsDvmONwDPiTjt88lWx29BvSwdaJJw8";
-    private static final String CLIENT_SECRET="VsT2YNjAbH6WgVrhwiE7JlKw";
-    private static final String CLIENT_ID="82521020889-gepgorji8252381j18ii2kd5cb20igsg.apps.googleusercontent.com";
+    //private static final String ACCESS_TOKEN = "ya29.GlxLByUeM22BYo-TmzwSSC6LSCWH_4naMi3J_TkOngflJQIzM3jz7tZBtUesOPRvoK_X-KsrfoXnIXh7gSYg1IeHgEC9kr09-f1Tfi_AkLywNSZfmqseuRLXJESZUg";
+    //private static final String REFRESH_TOKEN = "1/l60RQ1WQINlbcsDvmONwDPiTjt88lWx29BvSwdaJJw8";
+    private static final String CLIENT_SECRET = "VsT2YNjAbH6WgVrhwiE7JlKw";
+    private static final String CLIENT_ID = "82521020889-gepgorji8252381j18ii2kd5cb20igsg.apps.googleusercontent.com";
 
     private final String userId;
-    private final String accessToken;
+    private String accessToken;
     private final String refreshToken;
 
+    private Credential credential;
 
 
     public GmailApiWrapper(String userId, String accessToken, String refreshToken) throws GeneralSecurityException, IOException {
@@ -87,37 +96,41 @@ public class GmailApiWrapper implements IEmailApiWrapper {
 //    }
 
 
-    private void performRequest(final NetHttpTransport HTTP_TRANSPORT, String clientId, String clientSecret,String accessToken, String refreshToken) throws IOException {
-                Credential c = new GoogleCredential.Builder()
-                                .setJsonFactory(JSON_FACTORY)
-                                .setTransport(HTTP_TRANSPORT)
-                                .setClientSecrets(clientId,clientSecret)
-                                .build();
-                c.setAccessToken(accessToken);
-                c.setRefreshToken(refreshToken);
-                service = new Gmail.Builder(HTTP_TRANSPORT,JSON_FACTORY,c)
-                                .setApplicationName(APPLICATION_NAME)
-                                .build();
-            }
-
-
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-        // Load client secrets.
-        InputStream in = GmailApiWrapper.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-        if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-        }
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-
-        // Build flow and trigger user authorization request.
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-                .setAccessType("offline")
+    private void performRequest(final NetHttpTransport HTTP_TRANSPORT, String clientId, String clientSecret, String accessToken, String refreshToken) throws IOException {
+        Credential c = new GoogleCredential.Builder()
+                .setJsonFactory(JSON_FACTORY)
+                .setTransport(HTTP_TRANSPORT)
+                .setClientSecrets(clientId, clientSecret)
                 .build();
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+        c.setAccessToken(accessToken);
+        c.setRefreshToken(refreshToken);
+        service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, c)
+                .setApplicationName(APPLICATION_NAME)
+                .build();
+
+        this.credential = c;
+
+
     }
+
+
+//    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+//        // Load client secrets.
+//        InputStream in = GmailApiWrapper.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+//        if (in == null) {
+//            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+//        }
+//        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+//
+//        // Build flow and trigger user authorization request.
+//        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+//                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+//                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+//                .setAccessType("offline")
+//                .build();
+//        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+//        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+//    }
 
 
 //    public List<IEmailMessage> getMessages(String userId) throws IOException{
@@ -236,7 +249,7 @@ public class GmailApiWrapper implements IEmailApiWrapper {
             }
         } else {
 
-            if(part.getBody().getData() != null) {
+            if (part.getBody().getData() != null) {
                 res = part.getBody().getData();
             }
 
@@ -270,8 +283,7 @@ public class GmailApiWrapper implements IEmailApiWrapper {
 
                 getAttachmentsHelper(part1, messageId, attachments);
             }
-        }
-        else {
+        } else {
 
             if (part.getFilename() != null && part.getFilename().length() > 0) {
                 String filename = part.getFilename();
@@ -319,20 +331,41 @@ public class GmailApiWrapper implements IEmailApiWrapper {
 
 
     @Override
-    public List<EmailMessage> getMessages() throws Exception {
+    public List<EmailMessage> getMessages(Date startingTime) throws Exception {
+
         List<EmailMessage> results = new ArrayList<>();
-        List<Message> messages = getGmailMessages();
+        List<Message> messages = null;
+        try {
+            messages = getGmailMessages();
+        } catch (GoogleJsonResponseException e1) {
+
+            if (e1.getStatusCode() == TOKEN_EXPIRE) {
+
+                //refreshAccessToken();
+                //messages = getGmailMessages();
+                credential.refreshToken();
+                service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                        .setApplicationName(APPLICATION_NAME)
+                        .build();
+
+                messages = getGmailMessages();
+
+            }
+        }
+
         for (Message m : messages) {
             EmailMessage gmailMessage = new GmailMessage(m.getId());
             List<MessagePartHeader> headers = m.getPayload().getHeaders();
 
-            String subject = headers.stream().filter(h -> h.getName().equals("Subject")).collect(Collectors.toList()).get(0).getValue();
             String dateStr = headers.stream().filter(h -> h.getName().equals("Date")).collect(Collectors.toList()).get(0).getValue();
             dateStr = dateStr.substring(0, dateStr.lastIndexOf(' '));
             SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss"
                     , Locale.US);
             Date date = formatter.parse(dateStr);
+            if (date.before(startingTime))
+                break;
 
+            String subject = headers.stream().filter(h -> h.getName().equals("Subject")).collect(Collectors.toList()).get(0).getValue();
             String from = headers.stream().filter(h -> h.getName().equals("From")).collect(Collectors.toList()).get(0).getValue();
             from = from.substring(from.indexOf('<') + 1, from.lastIndexOf('>'));
 
@@ -357,4 +390,29 @@ public class GmailApiWrapper implements IEmailApiWrapper {
 
         return results;
     }
+
+    private void refreshAccessToken() {
+        try {
+            TokenResponse response =
+                    new GoogleRefreshTokenRequest(new NetHttpTransport(), new JacksonFactory(),
+                            refreshToken, CLIENT_ID, CLIENT_SECRET).execute();
+            System.out.println("Access token: " + response.getAccessToken());
+            this.accessToken = response.getAccessToken();
+        } catch (TokenResponseException e) {
+            if (e.getDetails() != null) {
+                System.err.println("Error: " + e.getDetails().getError());
+                if (e.getDetails().getErrorDescription() != null) {
+                    System.err.println(e.getDetails().getErrorDescription());
+                }
+                if (e.getDetails().getErrorUri() != null) {
+                    System.err.println(e.getDetails().getErrorUri());
+                }
+            } else {
+                System.err.println(e.getMessage());
+            }
+        } catch (IOException e2) {
+
+        }
+    }
+
 }

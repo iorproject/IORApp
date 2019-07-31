@@ -1,24 +1,27 @@
 package main.java.DB.Entities;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Receipt implements Serializable {
 
     private String email;
     private String companyName;
-    private String type;
+    private eContentType type;
     private byte[] body;
-    private String creationDate;
+    private Date creationDate;
     private int totalScoreIndicator;
-    private int totalPrice;
+    private String currency;
+    private float totalPrice;
 
-    public Receipt(String companyName, String email, String type, byte[] body, String creationDate, int totalScoreIndicator,int totalPrice) {
+    public Receipt(String companyName, String email, eContentType type, byte[] body, Date creationDate, String currency, float totalPrice) {
         this.email = email;
         this.type = type;
         this.body = body;
         this.creationDate = creationDate;
         this.totalScoreIndicator = totalScoreIndicator;
         this.companyName = companyName;
+        this.currency = currency;
         this.totalPrice = totalPrice;
     }
 
@@ -30,7 +33,7 @@ public class Receipt implements Serializable {
         return companyName;
     }
 
-    public String getType() {
+    public eContentType getType() {
         return type;
     }
 
@@ -38,7 +41,7 @@ public class Receipt implements Serializable {
         return body;
     }
 
-    public String getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
@@ -46,9 +49,7 @@ public class Receipt implements Serializable {
         return totalScoreIndicator;
     }
 
-    public int getTotalPrice(){
-        return totalPrice;
-    }
+    public String getCurrency() { return currency; }
 
     public void setEmail(String email) {
         this.email = email;
@@ -58,11 +59,19 @@ public class Receipt implements Serializable {
         this.companyName = companyName;
     }
 
-    public void setType(String type) {
+    public void eContentType(eContentType type) {
         this.type = type;
     }
 
-    public void setCreationDate(String creationDate) {
+    public float getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(float totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 }

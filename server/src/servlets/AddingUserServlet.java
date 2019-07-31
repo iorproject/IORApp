@@ -1,12 +1,9 @@
-package main.java.servlets;
+package servlets;
 
 import com.google.gson.Gson;
 import engine.IorEngine;
-import main.java.DB.DBHandler;
 import main.java.DB.Entities.User;
-import main.java.DB.error.FirebaseException;
-import main.java.DB.error.JacksonUtilityException;
-import main.java.servletsUtils.ServletsUtils;
+import servletsUtils.ServletsUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet(name = "AddingUserServlet", urlPatterns = {"/registerUser"})
 public class AddingUserServlet extends HttpServlet {
@@ -29,16 +28,22 @@ public class AddingUserServlet extends HttpServlet {
         String accessToken = request.getParameter("access_token");
         String refreshToken = request.getParameter("refresh_token");
 
-        IorEngine engine = ServletsUtils.getEngine(getServletContext());
-        engine.registerUser(new User(userId, accessToken, refreshToken));
+        PrintWriter o = response.getWriter();
+        Gson gson = new Gson();
 
+        Map<String, String> user = new HashMap<>();
+        user.put("email", userId);
+        user.put("token", accessToken);
 
-//        try (PrintWriter out = response.getWriter()) {
-//            Gson gson = new Gson();
-//            String message = gson.toJson("turn played");
-//            out.println(message);
-//            out.flush();
-//        }
+        String json = gson.toJson(user);
+        o.println(json);
+        o.flush();
+
+        int x= 5;
+
+        //IorEngine engine = ServletsUtils.getEngine(getServletContext());
+        //engine.registerUser(new User(userId, accessToken, refreshToken));
+
     }
 
 

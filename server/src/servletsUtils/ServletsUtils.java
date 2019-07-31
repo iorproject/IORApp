@@ -1,4 +1,4 @@
-package main.java.servletsUtils;
+package servletsUtils;
 
 import engine.IorEngine;
 

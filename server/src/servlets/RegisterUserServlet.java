@@ -43,8 +43,6 @@ public class RegisterUserServlet extends HttpServlet {
 
         IorEngine.registerUser(new User(email, accessToken, refreshToken, date));
 
-        //IorEngine engine = ServletsUtils.getEngine(getServletContext());
-        //engine.registerUser(new User(userId, accessToken, refreshToken));
 
     }
 

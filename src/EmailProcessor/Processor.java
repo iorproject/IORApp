@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Processor {
-    public void Run() throws FirebaseException, UnsupportedEncodingException {
+    public void Run() throws Throwable {
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         ReceiptsDAO dbHandler = DBHandler.getInstance();
         ApproveIndicator approveIndicators = dbHandler.getApprovalIndicators();
@@ -43,13 +43,13 @@ public class Processor {
                                 emailRecognition.Recognize(emailMessage);
                             }
                             dbHandler.setLastSearchMailTime(user.getEmail(), lastEmailMessage.getDate());
-                        } catch (Exception | FirebaseException ignored){
+                        } catch (Throwable ignored){
 
                         }
 
                     }).run();
                 });
-            } catch (Exception | FirebaseException e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
             System.out.println("Task #2 is running");

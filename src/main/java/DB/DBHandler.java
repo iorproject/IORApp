@@ -11,14 +11,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 
-public class DBHandler implements  ReceiptsDAO{
+public class DBHandler implements ReceiptsDAO{
     private static DBHandler dbHandler;
     private static Object lockObject = new Object();
 
-    private DBHandler() throws FirebaseException {
+    private DBHandler() {
     }
 
-    public static DBHandler getInstance() throws FirebaseException {
+    public static DBHandler getInstance() {
         if(dbHandler == null){
             synchronized (lockObject){
                 if(dbHandler == null){
@@ -30,47 +30,87 @@ public class DBHandler implements  ReceiptsDAO{
     }
 
     @Override
-    public ApproveIndicator getApprovalIndicators() throws UnsupportedEncodingException, FirebaseException {
+    public ApproveIndicator getApprovalIndicators() throws Throwable {
         return FirebaseDao.getInstance().getApprovalIndicators();
     }
 
     @Override
-    public TotalIndicator getTotalIndicator() throws UnsupportedEncodingException, FirebaseException {
+    public TotalIndicator getTotalIndicator() throws Throwable {
         return FirebaseDao.getInstance().getTotalIndicator();
     }
 
     @Override
-    public List<Receipt> getUserReceipts(String email) throws UnsupportedEncodingException, FirebaseException {
+    public List<Receipt> getUserReceipts(String email) throws Throwable {
         return FirebaseDao.getInstance().getUserReceipts(email);
     }
 
     @Override
-    public List<Receipt> getCompanyReceiptsByUser(String email, String company) throws UnsupportedEncodingException, FirebaseException {
+    public List<Receipt> getCompanyReceiptsByUser(String email, String company) throws Throwable {
         return FirebaseDao.getInstance().getCompanyReceiptsByUser(email,company);
     }
 
     @Override
-    public void setLastSearchMailTime(String email, Date lastUpdatedSearchTime) throws UnsupportedEncodingException, FirebaseException {
+    public void setLastSearchMailTime(String email, Date lastUpdatedSearchTime) throws Throwable {
         FirebaseDao.getInstance().setLastSearchMailTime(email,lastUpdatedSearchTime);
     }
 
     @Override
-    public Date getLastSearchMailTime(String email) throws UnsupportedEncodingException, FirebaseException {
+    public Date getLastSearchMailTime(String email) throws Throwable {
         return FirebaseDao.getInstance().getLastSearchMailTime(email);
     }
 
     @Override
-    public void insertReceipt(Receipt receipt) throws UnsupportedEncodingException, FirebaseException {
+    public void insertReceipt(Receipt receipt) throws Throwable {
         FirebaseDao.getInstance().insertReceipt(receipt);
     }
 
     @Override
-    public List<User> getAllUsers() throws UnsupportedEncodingException, FirebaseException {
+    public List<User> getAllUsers() throws Throwable {
         return FirebaseDao.getInstance().getAllUsers();
     }
 
     @Override
-    public void registerUser(User user) throws UnsupportedEncodingException, FirebaseException, JacksonUtilityException {
+    public void registerUser(User user) throws Throwable, JacksonUtilityException {
         FirebaseDao.getInstance().registerUser(user);
+    }
+
+    @Override
+    public List<String> getCompaniesNames(String email) throws Throwable {
+        return FirebaseDao.getInstance().getCompaniesNames(email);
+    }
+
+    @Override
+    public List<String> getAllFriendshipsByUser(String email) throws Throwable {
+        return FirebaseDao.getInstance().getAllFriendshipsByUser(email);
+    }
+
+    @Override
+    public void friendshipRequest(String requesterEmail, String receiverEmail) throws Throwable {
+        FirebaseDao.getInstance().friendshipRequest(requesterEmail,receiverEmail);
+    }
+
+    @Override
+    public void acceptFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable {
+        FirebaseDao.getInstance().acceptFriendshipRequest(receiverEmail,requesterEmail);
+    }
+
+    @Override
+    public void rejectFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable {
+        FirebaseDao.getInstance().rejectFriendshipRequest(receiverEmail,requesterEmail);
+    }
+
+    @Override
+    public void removeFriendShip(String requesterEmail, String toDeleteEmail) throws Throwable {
+        FirebaseDao.getInstance().removeFriendShip(requesterEmail,toDeleteEmail);
+    }
+
+    @Override
+    public List<String> getAllRequestsByUser(String email) throws Throwable {
+        return FirebaseDao.getInstance().getAllRequestsByUser(email);
+    }
+
+    @Override
+    public User getCredentialUser(String email) throws Throwable {
+        return FirebaseDao.getInstance().getCredentialUser(email);
     }
 }

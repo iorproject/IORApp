@@ -19,8 +19,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Tomcat 8.5.23" level="application_server_libraries" />
-    <orderEntry type="module" module-name="maven-example" />
+    <orderEntry type="library" name="libs3" level="project" />
     <orderEntry type="library" name="gson-2.6.2" level="project" />
+    <orderEntry type="library" name="libs" level="project" />
+    <orderEntry type="library" name="libs1" level="project" />
+    <orderEntry type="library" name="libs2" level="project" />
+    <orderEntry type="library" name="gson-2.6.21" level="project" />
+    <orderEntry type="module" module-name="IORApp" />
+    <orderEntry type="library" name="Java EE 6-Java EE 6" level="project" />
+    <orderEntry type="library" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
   </component>
 </module>

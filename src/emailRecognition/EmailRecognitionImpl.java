@@ -19,7 +19,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
     private String hostName;
     private ReceiptsDAO dbHandler;
 
-    public EmailRecognitionImpl(IReceiptBodyRecognition bodyRecognition) throws FirebaseException {
+    public EmailRecognitionImpl(IReceiptBodyRecognition bodyRecognition) {
         this.bodyRecognition = bodyRecognition;
         dbHandler = DBHandler.getInstance();
     }
@@ -79,7 +79,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
         Receipt receipt = new Receipt(hostName, emailMessage.getFrom(), eType, bytes, emailMessage.getDate(),bodyRecognition.getCurrency(), bodyRecognition.getTotalPrice());
         try {
             dbHandler.insertReceipt(receipt);
-        } catch (UnsupportedEncodingException | FirebaseException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }

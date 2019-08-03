@@ -35,7 +35,7 @@ public class IorEngine {
             DBHandler.getInstance().getUserReceipts(user.getEmail());
             receipts = DBHandler.getInstance().getUserReceipts(user.getEmail());
         }
-        catch (FirebaseException | JacksonUtilityException | UnsupportedEncodingException e) {
+        catch (Throwable e) {
 
         }
     }

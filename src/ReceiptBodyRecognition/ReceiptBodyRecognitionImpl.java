@@ -3,30 +3,31 @@ package ReceiptBodyRecognition;
 import dbObjects.ApproveIndicator;
 import main.java.DB.Entities.TotalIndicator;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
-    private final String regax = "(USD|EUR|€|\\$)\\s?(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2}))|(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2})?)\\s?(USD|EUR|€|\\$)";
-    private List<ApproveIndicator> approveIndicators;
-    private List<TotalIndicator> totalIndicators;
-    private List<ApproveIndicator> approvedIdentifiers = new LinkedList<>();
-    private String totalIdentifier = "";
-    private String totalPrice;
+    private final int PASS_SCORE = 30;
+    private final ApproveIndicator approveIndicators;
+    private final TotalIndicator totalIndicators;
+    private float totalPrice;
+    private String currency;
 
-    public void setApproveIndicators(List<ApproveIndicator> approveIndicators) {
+    public ReceiptBodyRecognitionImpl(ApproveIndicator approveIndicators, TotalIndicator totalIndicators){
         this.approveIndicators = approveIndicators;
-    }
-
-    public void setTotalIndicators(List<TotalIndicator> totalIndicators) {
         this.totalIndicators = totalIndicators;
     }
 
     @Override
-    public String getTotalPrice() {
+    public float getTotalPrice() {
         return totalPrice;
+    }
+
+    @Override
+    public String getCurrency() {
+        return currency;
     }
 
     @Override
@@ -36,35 +37,42 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
 
     private boolean recognizeTotal(String content) {
 //        totalIdentifier = totalIndicators.stream().filter(content::contains).findFirst().get();
-//        totalIdentifier = String.valueOf(totalIndicators.stream().filter(t -> content.contains(t.getIndicators())).findFirst().get());
+        List<String> allStrings = new LinkedList<>();
+        totalIndicators.
+                getIndicator().
+                entrySet().
+                stream().
+                sorted(Comparator.comparing(Map.Entry::getKey)).
+                forEach(t -> allStrings.addAll(t.getValue()));
+        String totalIdentifier = String.valueOf(allStrings.
+                stream().
+                sorted(Comparator.reverseOrder()).
+                filter(content::contains).
+                findFirst().
+                get());
         int index = content.lastIndexOf(totalIdentifier);
-        return findPrice(content.substring(index)) && totalIdentifier.equals("");
+        return !totalIdentifier.equals("") && findPrice(content.substring(index));
     }
 
     private boolean findPrice(String content) {
-        final Pattern pattern = Pattern.compile(regax);
-        Matcher matcher = pattern.matcher(content);
-        boolean result = matcher.find();
-        totalPrice = result? matcher.group() : "";
-        return result;
+        String priceExpression = PriceFinder.findPriceExpression(content);
+        if (priceExpression == null)
+            return false;
+        totalPrice = PriceFinder.getPriceNumber(priceExpression);
+        currency = PriceFinder.getCurrency(priceExpression);
+        return !currency.equals("") && totalPrice != -1;
     }
 
     private boolean recognizeApproved(String content) {
-        for(ApproveIndicator indicator : approveIndicators){
-/*
-            List<String> indicatorList = indicator.getIndicators();
-            if(indicatorList.size() == 1){
-                if(content.contains(indicatorList.get(0))){
-                    approvedIdentifiers.add(indicator);
-                    int sum = 0;
-                    sum = approvedIdentifiers.stream().mapToInt(ApproveIndicator::getScore).sum();
-                    if(sum >= 30)
-                        return true;
-                }
+        int score = 0;
+        Map<String,Integer> indicatorMap = approveIndicators.getIndicators();
+        for(Map.Entry<String,Integer> entry : indicatorMap.entrySet()){
+            if(content.contains(entry.getKey())) {
+                score += entry.getValue();
+                if(score >= PASS_SCORE)
+                    return true;
             }
-*/
         }
-
         return false;
     }
 }

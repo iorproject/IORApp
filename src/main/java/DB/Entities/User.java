@@ -1,16 +1,19 @@
 package main.java.DB.Entities;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class User implements Serializable {
     private String email;
     private String accessToken;
     private String refreshToken;
+    private Date registerDate;
 
-    public User(String email, String accessToken, String refreshToken) {
+    public User(String email, String accessToken, String refreshToken, Date registerDate) {
         this.email = email;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.registerDate = registerDate;
     }
 
     public User(String email){
@@ -41,4 +44,7 @@ public class User implements Serializable {
         return email;
     }
 
+    public Date getRegisterDate() {
+        return registerDate;
+    }
 }

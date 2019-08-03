@@ -4,10 +4,8 @@ import dbObjects.ApproveIndicator;
 import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.TotalIndicator;
 import main.java.DB.Entities.User;
-import main.java.DB.error.FirebaseException;
 import main.java.DB.error.JacksonUtilityException;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 
@@ -80,13 +78,13 @@ public class DBHandler implements ReceiptsDAO{
     }
 
     @Override
-    public List<String> getAllFriendshipsByUser(String email) throws Throwable {
+    public List<User> getAllFriendshipsByUser(String email) throws Throwable {
         return FirebaseDao.getInstance().getAllFriendshipsByUser(email);
     }
 
     @Override
-    public void friendshipRequest(String requesterEmail, String receiverEmail) throws Throwable {
-        FirebaseDao.getInstance().friendshipRequest(requesterEmail,receiverEmail);
+    public void sendFriendshipRequest(String requesterEmail, String receiverEmail) throws Throwable {
+        FirebaseDao.getInstance().sendFriendshipRequest(requesterEmail,receiverEmail);
     }
 
     @Override
@@ -105,7 +103,7 @@ public class DBHandler implements ReceiptsDAO{
     }
 
     @Override
-    public List<String> getAllRequestsByUser(String email) throws Throwable {
+    public List<User> getAllRequestsByUser(String email) throws Throwable {
         return FirebaseDao.getInstance().getAllRequestsByUser(email);
     }
 

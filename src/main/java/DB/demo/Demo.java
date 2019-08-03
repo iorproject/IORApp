@@ -29,10 +29,14 @@ public class Demo {
 		final String firebase_apiKey = "AAAAFx7lSQ8:APA91bHgHuEV0G6OMtAzLdPdS0rHlE3EizFM_DuVQXvfgscTM-gbVeuIcLK3gZcLGIis2B1YkePVO0qC4rBwLGHsyEt57B5lKh6bSEg6-UiCN8yAekCZeZjTBQhjDnLZvvmXrpYRYzd2";
 
         byte[] bytes = "omer".getBytes();
-        Receipt r = new Receipt("AliExpress","omerblechman@gmail.com",eContentType.PDF,bytes,new Date(),"US",300);
+        Receipt r = new Receipt("Amazon","omerblechman@gmail.com",eContentType.PDF,bytes,new Date(),"US",300);
         User user = new User("omer@gmail.com","111","1111");
         FirebaseDao firebaseDao = FirebaseDao.getInstance();
-		//firebaseDao.insertReceipt(r);
+        /*try {
+            firebaseDao.insertReceipt(r);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }*/
         /*Map<String, Object> dataMap = new LinkedHashMap<String, Object>();
         Map<String, Object> dataMap2 = new LinkedHashMap<String, Object>();
         dataMap2.put("accessToken","111");
@@ -40,8 +44,14 @@ public class Demo {
         dataMap.put("omerblechman@gmail.com",dataMap2);*/
         //firebaseDao.registerUser(user);
         try {
-            User u = firebaseDao.getCredentialUser("ior46800@gmail.com");
-            String s = u.getEmail();
+            firebaseDao.sendFriendshipRequest("ior46800@gmail.com","omerblechman@gmail.com");
+            firebaseDao.sendFriendshipRequest("ior46800@gmail.com","omer@gmail.com");
+//            firebaseDao.acceptFriendshipRequest("omer@gmail.com","ior46800@gmail.com");
+//            firebaseDao.acceptFriendshipRequest("omerblechman@gmail.com","ior46800@gmail.com");
+//
+            List<User> f =firebaseDao.getAllRequestsByUser("ior46800@gmail.com");
+            System.out.println(f);
+
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

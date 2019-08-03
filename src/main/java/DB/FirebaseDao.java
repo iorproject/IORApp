@@ -4,11 +4,9 @@ import com.google.gson.Gson;
 import dbObjects.ApproveIndicator;
 import main.java.DB.Entities.*;
 import main.java.DB.error.FirebaseException;
-import main.java.DB.error.JacksonUtilityException;
 import main.java.DB.model.FirebaseResponse;
 import main.java.DB.service.Firebase;
 
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -180,21 +178,28 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     @Override
-    public List<String> getAllFriendshipsByUser(String email) throws Throwable {
-        email = encodeString(email);
-        final String userRequestsPath = "Users/friendships/" + email;
+    public List<User> getAllFriendshipsByUser(String email) throws Throwable {
+        final String userRequestsPath = "Users";
         response = firebase.get( userRequestsPath);
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
-        return json.fromJson(decodeString,List.class);
+
+        return json.fromJson(decodeString,FriendshipsResponse.class)
+                .getFriendships(email)
+                .values()
+                .stream()
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void friendshipRequest(String requesterEmail, String receiverEmail) throws Throwable {
+    public void sendFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable {
         requesterEmail = encodeString(requesterEmail);
         receiverEmail = encodeString(receiverEmail);
-        final String userRequestsPath = "Users/requests/" + requesterEmail;
-        response = firebase.patch(userRequestsPath,new Gson().toJson(receiverEmail));
+        final String userRequestsPath = "Users/requests/" + receiverEmail;
+        Map<String,User> newRequestMap = new HashMap<>();
+        User requesterUser = new User(requesterEmail);
+        newRequestMap.put(requesterEmail,requesterUser);
+        response = firebase.patch(userRequestsPath,new Gson().toJson(newRequestMap));
     }
 
     @Override
@@ -202,12 +207,15 @@ public class FirebaseDao implements ReceiptsDAO{
         requesterEmail = encodeString(requesterEmail);
         receiverEmail = encodeString(receiverEmail);
         removeFriendShipRequest(receiverEmail,requesterEmail);
-        final String userFriendShipPath = "Users/friendship/" + requesterEmail;
-        response = firebase.patch(userFriendShipPath,new Gson().toJson(receiverEmail));
+        final String userFriendShipPath = "Users/friendships/" + requesterEmail;
+        Map<String,User> newFriendShipMap = new HashMap<>();
+        User receiverUser = new User(receiverEmail);
+        newFriendShipMap.put(receiverEmail,receiverUser);
+        response = firebase.patch(userFriendShipPath,new Gson().toJson(newFriendShipMap));
     }
 
     private void removeFriendShipRequest(String receiverEmail, String requesterEmail) throws Throwable {
-        final String userRequestToDeletePath = "Users/requests/" + requesterEmail + "/" + receiverEmail;
+        final String userRequestToDeletePath = "Users/requests/" + receiverEmail + "/" + requesterEmail;
         response = firebase.delete(userRequestToDeletePath);
     }
 
@@ -215,23 +223,28 @@ public class FirebaseDao implements ReceiptsDAO{
     public void rejectFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable {
         requesterEmail = encodeString(requesterEmail);
         receiverEmail = encodeString(receiverEmail);
-        removeFriendShip(receiverEmail,requesterEmail);
+        removeFriendShipRequest(receiverEmail,requesterEmail);
     }
 
     @Override
     public void removeFriendShip(String requesterEmail, String toDeleteEmail) throws Throwable {
+        requesterEmail = encodeString(requesterEmail);
+        toDeleteEmail = encodeString(toDeleteEmail);
         final String userFriendShipToDeletePath = "Users/friendships/" + toDeleteEmail + "/" + requesterEmail;
         response = firebase.delete(userFriendShipToDeletePath);
     }
 
     @Override
-    public List<String> getAllRequestsByUser(String email) throws Throwable {
-        email = encodeString(email);
-        final String userRequestsPath = "Users/requests/" + email;
+    public List<User> getAllRequestsByUser(String email) throws Throwable {
+        final String userRequestsPath = "Users";
         response = firebase.get( userRequestsPath);
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
-        return json.fromJson(decodeString,List.class);
+        return json.fromJson(decodeString,RequestsResponse.class)
+                .getRequests(email)
+                .values()
+                .stream()
+                .collect(Collectors.toList());
     }
 
     @Override

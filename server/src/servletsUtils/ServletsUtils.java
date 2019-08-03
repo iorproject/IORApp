@@ -18,6 +18,4 @@ public class ServletsUtils {
         }
         return (IorEngine) servletContext.getAttribute(IOR_ENGINE_ATTRIBUTE_NAME);
     }
-
-
 }

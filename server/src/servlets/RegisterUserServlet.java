@@ -12,11 +12,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet(name = "AddingUserServlet", urlPatterns = {"/registerUser"})
-public class AddingUserServlet extends HttpServlet {
+@WebServlet(name = "RegisterUserServlet", urlPatterns = {"/registerUser"})
+public class RegisterUserServlet extends HttpServlet {
 
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -24,22 +28,20 @@ public class AddingUserServlet extends HttpServlet {
 
         response.setContentType("application/json");
 
-        String userId = request.getParameter("email");
+        String email = request.getParameter("email");
         String accessToken = request.getParameter("access_token");
         String refreshToken = request.getParameter("refresh_token");
+        String registerDate = request.getParameter("registerDate");
 
-        PrintWriter o = response.getWriter();
-        Gson gson = new Gson();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;
+        try {
+            date = dateFormat.parse(registerDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-        Map<String, String> user = new HashMap<>();
-        user.put("email", userId);
-        user.put("token", accessToken);
-
-        String json = gson.toJson(user);
-        o.println(json);
-        o.flush();
-
-        int x= 5;
+        IorEngine.registerUser(new User(email, accessToken, refreshToken, date));
 
         //IorEngine engine = ServletsUtils.getEngine(getServletContext());
         //engine.registerUser(new User(userId, accessToken, refreshToken));

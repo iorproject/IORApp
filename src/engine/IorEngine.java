@@ -20,7 +20,7 @@ public class IorEngine {
 
         try {
             DBHandler.getInstance().registerUser(user);
-            DBHandler.getInstance().getUserReceipts(user.getEmail());
+
         }
         catch (Throwable e) {
 

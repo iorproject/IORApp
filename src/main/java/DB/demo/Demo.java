@@ -30,7 +30,7 @@ public class Demo {
 
         byte[] bytes = "omer".getBytes();
         Receipt r = new Receipt("Amazon","omerblechman@gmail.com",eContentType.PDF,bytes,new Date(),"US",300);
-        User user = new User("omer@gmail.com","111","1111");
+        User user = new User("omer@gmail.com","111","1111",new Date());
         FirebaseDao firebaseDao = FirebaseDao.getInstance();
         /*try {
             firebaseDao.insertReceipt(r);

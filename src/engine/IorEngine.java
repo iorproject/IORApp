@@ -16,17 +16,25 @@ public class IorEngine {
 
 
     public static void registerUser(User user) {
-
-
         try {
             DBHandler.getInstance().registerUser(user);
 
         }
         catch (Throwable e) {
-
         }
     }
 
+    public static User getUserInfo(String email) {
 
+        User user = null;
 
+        try {
+            user = DBHandler.getInstance().getCredentialUser(email);
+        }
+        catch (Throwable e) {
+
+        }
+
+        return user;
+    }
 }

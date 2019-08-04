@@ -26,6 +26,4 @@ public interface ReceiptsDAO {
     void removeFriendShip(String requesterEmail, String toDeleteEmail) throws Throwable;
     List<User> getAllRequestsByUser(String email) throws Throwable;
     User getCredentialUser(String email) throws Throwable;
-
-
 }

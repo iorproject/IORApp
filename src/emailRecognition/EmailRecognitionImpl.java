@@ -40,7 +40,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
 
     private boolean validateFromField(String from) {
         String domain = from.substring(from.indexOf("@") + 1);
-        hostName = domain.substring(0, domain.indexOf(".") - 1).toLowerCase();
+        hostName = domain.substring(0, domain.indexOf(".")).toLowerCase();
         return Arrays.stream(excludeMails).noneMatch(hostName::equals);
     }
 

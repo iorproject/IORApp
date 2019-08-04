@@ -19,7 +19,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
     private String hostName;
     private ReceiptsDAO dbHandler;
 
-    public EmailRecognitionImpl(IReceiptBodyRecognition bodyRecognition) {
+    public EmailRecognitionImpl(IReceiptBodyRecognition bodyRecognition) throws FirebaseException {
         this.bodyRecognition = bodyRecognition;
         dbHandler = DBHandler.getInstance();
     }
@@ -40,7 +40,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
 
     private boolean validateFromField(String from) {
         String domain = from.substring(from.indexOf("@") + 1);
-        hostName = domain.substring(0, domain.indexOf(".") - 1).toLowerCase();
+        hostName = domain.substring(0, domain.indexOf(".")).toLowerCase();
         return Arrays.stream(excludeMails).noneMatch(hostName::equals);
     }
 
@@ -79,8 +79,8 @@ public class EmailRecognitionImpl implements IEmailRecognition{
         Receipt receipt = new Receipt(hostName, emailMessage.getFrom(), eType, bytes, emailMessage.getDate(),bodyRecognition.getCurrency(), bodyRecognition.getTotalPrice());
         try {
             dbHandler.insertReceipt(receipt);
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
     }
 

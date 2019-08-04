@@ -3,10 +3,7 @@ package ReceiptBodyRecognition;
 import dbObjects.ApproveIndicator;
 import main.java.DB.Entities.TotalIndicator;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
     private final int PASS_SCORE = 30;
@@ -44,13 +41,12 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
                 stream().
                 sorted(Comparator.comparing(Map.Entry::getKey)).
                 forEach(t -> allStrings.addAll(t.getValue()));
-        String totalIdentifier = String.valueOf(allStrings.
+        Optional<String> totalIdentifier = Optional.ofNullable(String.valueOf(allStrings.
                 stream().
                 sorted(Comparator.reverseOrder()).
                 filter(content::contains).
-                findFirst().
-                get());
-        int index = content.lastIndexOf(totalIdentifier);
+                findFirst()));
+        int index = content.lastIndexOf(totalIdentifier.toString());
         return !totalIdentifier.equals("") && findPrice(content.substring(index));
     }
 

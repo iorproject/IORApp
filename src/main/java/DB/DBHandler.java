@@ -1,6 +1,7 @@
 package main.java.DB;
 
 import dbObjects.ApproveIndicator;
+import main.java.DB.Entities.CompanyLogo;
 import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.TotalIndicator;
 import main.java.DB.Entities.User;
@@ -110,5 +111,10 @@ public class DBHandler implements ReceiptsDAO{
     @Override
     public User getCredentialUser(String email) throws Throwable {
         return FirebaseDao.getInstance().getCredentialUser(email);
+    }
+
+    @Override
+    public List<CompanyLogo> getAllCompaniesLogo() throws Throwable{
+        return FirebaseDao.getInstance().getAllCompaniesLogo();
     }
 }

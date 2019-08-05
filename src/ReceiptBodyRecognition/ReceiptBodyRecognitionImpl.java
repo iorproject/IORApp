@@ -29,11 +29,11 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
 
     @Override
     public boolean recognize(String content) {
-        return recognizeTotal(content) && recognizeApproved(content);
+        String contentToLower = content.toLowerCase();
+        return recognizeTotal(contentToLower) && recognizeApproved(contentToLower);
     }
 
     private boolean recognizeTotal(String content) {
-//        totalIdentifier = totalIndicators.stream().filter(content::contains).findFirst().get();
         List<String> allStrings = new LinkedList<>();
         totalIndicators.
                 getIndicator().
@@ -41,13 +41,17 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
                 stream().
                 sorted(Comparator.comparing(Map.Entry::getKey)).
                 forEach(t -> allStrings.addAll(t.getValue()));
-        Optional<String> totalIdentifier = Optional.ofNullable(String.valueOf(allStrings.
-                stream().
-                sorted(Comparator.reverseOrder()).
-                filter(content::contains).
-                findFirst()));
-        int index = content.lastIndexOf(totalIdentifier.toString());
-        return !totalIdentifier.equals("") && findPrice(content.substring(index));
+        Collections.reverse(allStrings);
+        try{
+            String totalIdentifier = String.valueOf(allStrings.
+                    stream().
+                    filter(str -> content.contains(str)).
+                    findFirst().get());
+            int index = content.lastIndexOf(totalIdentifier);
+            return !totalIdentifier.equals("") && findPrice(content.substring(index));
+        } catch (Exception e){
+            return false;
+        }
     }
 
     private boolean findPrice(String content) {
@@ -63,7 +67,7 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
         int score = 0;
         Map<String,Integer> indicatorMap = approveIndicators.getIndicators();
         for(Map.Entry<String,Integer> entry : indicatorMap.entrySet()){
-            if(content.contains(entry.getKey())) {
+            if(content.contains(entry.getKey().toLowerCase())) {
                 score += entry.getValue();
                 if(score >= PASS_SCORE)
                     return true;

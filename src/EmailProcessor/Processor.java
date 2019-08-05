@@ -78,13 +78,17 @@ public class Processor {
                     Date from = dbHandler.getLastSearchMailTime(user.getEmail());
                     from = from == null ? new Date(0) : from;
                     messages = emailApiWrapper.getMessages(from);
-                    Optional<EmailMessage> lastEmailMessage = messages.
-                            stream().
-                            max(Comparator.comparing(EmailMessage::getDate));
+                    EmailMessage lastEmailMessage = null;
+                    try {
+                        lastEmailMessage = messages.
+                                stream().
+                                max(Comparator.comparing(EmailMessage::getDate)).get();
+                    }catch (Exception ignored){}
+
                     for(EmailMessage emailMessage : messages){
                         emailRecognition.Recognize(emailMessage);
                     }
-                    Date date = lastEmailMessage != null ? lastEmailMessage.get().getDate() : null;
+                    Date date = lastEmailMessage != null ? lastEmailMessage.getDate() : null;
                     dbHandler.setLastSearchMailTime(user.getEmail(), date);
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();

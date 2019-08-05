@@ -14,12 +14,13 @@ import java.util.Arrays;
 import main.java.DB.*;
 
 public class EmailRecognitionImpl implements IEmailRecognition{
-    private final String[] excludeMails = new String[]{"gmail, hotmail, outlook"};
+//    private final String[] excludeMails = new String[]{"gmail, hotmail, outlook"};
+private final String[] excludeMails = new String[]{"hotmail, outlook"};//TODO: here for tests
     private IReceiptBodyRecognition bodyRecognition;
     private String hostName;
     private ReceiptsDAO dbHandler;
 
-    public EmailRecognitionImpl(IReceiptBodyRecognition bodyRecognition) {
+    public EmailRecognitionImpl(IReceiptBodyRecognition bodyRecognition) throws FirebaseException {
         this.bodyRecognition = bodyRecognition;
         dbHandler = DBHandler.getInstance();
     }
@@ -40,8 +41,8 @@ public class EmailRecognitionImpl implements IEmailRecognition{
 
     private boolean validateFromField(String from) {
         String domain = from.substring(from.indexOf("@") + 1);
-        hostName = domain.substring(0, domain.indexOf(".") - 1).toLowerCase();
-        return Arrays.stream(excludeMails).noneMatch(hostName::equals);
+        hostName = domain.substring(0, domain.indexOf(".")).toLowerCase();
+        return Arrays.stream(excludeMails).anyMatch(hostName::equals);
     }
 
     private boolean validateAttachments(EmailMessage emailMessage){
@@ -79,8 +80,8 @@ public class EmailRecognitionImpl implements IEmailRecognition{
         Receipt receipt = new Receipt(hostName, emailMessage.getFrom(), eType, bytes, emailMessage.getDate(),bodyRecognition.getCurrency(), bodyRecognition.getTotalPrice());
         try {
             dbHandler.insertReceipt(receipt);
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
     }
 

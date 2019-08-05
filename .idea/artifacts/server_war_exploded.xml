@@ -14,7 +14,6 @@
           <element id="library" level="project" name="gson-2.6.2" />
           <element id="library" level="project" name="libs1" />
           <element id="library" level="project" name="libs2" />
-          <element id="library" level="project" name="gmail" />
           <element id="library" level="project" name="gmail1" />
           <element id="library" level="project" name="Maven: com.google.oauth-client:google-oauth-client:1.23.0" />
           <element id="library" level="project" name="Maven: com.google.http-client:google-http-client:1.23.0" />

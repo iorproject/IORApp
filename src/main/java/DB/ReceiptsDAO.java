@@ -1,6 +1,7 @@
 package main.java.DB;
 
 import dbObjects.ApproveIndicator;
+import main.java.DB.Entities.CompanyLogo;
 import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.TotalIndicator;
 import main.java.DB.Entities.User;
@@ -26,4 +27,6 @@ public interface ReceiptsDAO {
     void removeFriendShip(String requesterEmail, String toDeleteEmail) throws Throwable;
     List<User> getAllRequestsByUser(String email) throws Throwable;
     User getCredentialUser(String email) throws Throwable;
+    List<CompanyLogo> getAllCompaniesLogo() throws Throwable;
+
 }

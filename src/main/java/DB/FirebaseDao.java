@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 import dbObjects.ApproveIndicator;
 import main.java.DB.Entities.*;
 import main.java.DB.error.FirebaseException;
+import main.java.DB.error.JacksonUtilityException;
 import main.java.DB.model.FirebaseResponse;
 import main.java.DB.service.Firebase;
 
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -150,7 +152,7 @@ public class FirebaseDao implements ReceiptsDAO{
         final String userPath = "Users";
         response = firebase.get(userPath);
         Gson json = new Gson();
-        CredentialsResponse credentialsResponse = json.fromJson(response.getRawBody(),CredentialsResponse.class);
+        CredentialsResponse credentialsResponse = json.fromJson(decodeString(response.getRawBody()),CredentialsResponse.class);
         return credentialsResponse.getCredentials().values().stream()
                 .collect(Collectors.toList());
     }
@@ -189,6 +191,14 @@ public class FirebaseDao implements ReceiptsDAO{
                 .values()
                 .stream()
                 .collect(Collectors.toList());
+    }
+
+    public void addLogo(String companyName,String URL) throws JacksonUtilityException, UnsupportedEncodingException, FirebaseException {
+        final String userRequestsPath = "Companies/logos";
+        URL = encodeString(URL);
+        Map<String, Object> dataMap = new LinkedHashMap<String, Object>();
+        dataMap.put(companyName,URL);
+        response = firebase.patch( userRequestsPath,dataMap);
     }
 
     @Override
@@ -255,5 +265,18 @@ public class FirebaseDao implements ReceiptsDAO{
         String decodeString = decodeString(response.getRawBody());
         CredentialsResponse credentialsResponse = json.fromJson(decodeString,CredentialsResponse.class);
         return credentialsResponse.getCredentials().get(email);
+    }
+
+    @Override
+    public List<CompanyLogo> getAllCompaniesLogo() throws Throwable{
+        final String logosRequestsPath = "Companies";
+        response = firebase.get(logosRequestsPath);
+        Gson json = new Gson();
+        String decodeString = decodeString(response.getRawBody());
+        LogosResponse logosResponse = json.fromJson(decodeString,LogosResponse.class);
+        return logosResponse.getLogos().entrySet()
+                .stream()
+                .map(logo -> new CompanyLogo(logo.getKey(),logo.getValue()))
+                .collect(Collectors.toList());
     }
 }

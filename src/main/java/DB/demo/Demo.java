@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 import dbObjects.ApproveIndicator;
-import main.java.DB.Entities.Receipt;
-import main.java.DB.Entities.TotalIndicator;
-import main.java.DB.Entities.User;
-import main.java.DB.Entities.eContentType;
+import main.java.DB.Entities.*;
 import main.java.DB.FirebaseDao;
 import main.java.DB.error.FirebaseException;
 import main.java.DB.error.JacksonUtilityException;
@@ -28,15 +25,16 @@ public class Demo {
 		// get the api-key (ie: 'tR7u9Sqt39qQauLzXmRycXag18Z2')
 		final String firebase_apiKey = "AAAAFx7lSQ8:APA91bHgHuEV0G6OMtAzLdPdS0rHlE3EizFM_DuVQXvfgscTM-gbVeuIcLK3gZcLGIis2B1YkePVO0qC4rBwLGHsyEt57B5lKh6bSEg6-UiCN8yAekCZeZjTBQhjDnLZvvmXrpYRYzd2";
 
-        byte[] bytes = "omer".getBytes();
-        Receipt r = new Receipt("Amazon","omerblechman@gmail.com",eContentType.PDF,bytes,new Date(),"US",300);
-        User user = new User("omer@gmail.com","111","1111",new Date());
+        byte[] bytes = "Paypal".getBytes();
+        Receipt r = new Receipt("Paypal","ior46800@gmail.com",eContentType.STRING,bytes,new Date(),"US",300);
+        //User user = new User("omer@gmail.com","111","1111",new Date());
         FirebaseDao firebaseDao = FirebaseDao.getInstance();
         /*try {
             firebaseDao.insertReceipt(r);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }*/
+       // Map<String, Object> dataMap = new LinkedHashMap<String, Object>();
         /*Map<String, Object> dataMap = new LinkedHashMap<String, Object>();
         Map<String, Object> dataMap2 = new LinkedHashMap<String, Object>();
         dataMap2.put("accessToken","111");
@@ -44,8 +42,9 @@ public class Demo {
         dataMap.put("omerblechman@gmail.com",dataMap2);*/
         //firebaseDao.registerUser(user);
         try {
-            firebaseDao.sendFriendshipRequest("ior46800@gmail.com","omerblechman@gmail.com");
-            firebaseDao.sendFriendshipRequest("ior46800@gmail.com","omer@gmail.com");
+            List<CompanyLogo> c = firebaseDao.getAllCompaniesLogo();
+            System.out.println(c);
+            //firebaseDao.sendFriendshipRequest("ior46800@gmail.com","omer@gmail.com");
 //            firebaseDao.acceptFriendshipRequest("omer@gmail.com","ior46800@gmail.com");
 //            firebaseDao.acceptFriendshipRequest("omerblechman@gmail.com","ior46800@gmail.com");
 //

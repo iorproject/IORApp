@@ -1,11 +1,10 @@
 package servlets;
 
+
 import com.google.gson.Gson;
 import engine.IorEngine;
 import main.java.DB.Entities.User;
-import servletsUtils.Constants;
 
-import javax.jws.soap.SOAPBinding;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,14 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 
-@WebServlet(name = "UserInfoServlet", urlPatterns = {"/userInfo"})
+@WebServlet(name = "UserPartnersServlet", urlPatterns = {"/userPartners"})
 
-public class UserInfoServlet extends HttpServlet {
+public class UserPartnersServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,10 +24,9 @@ public class UserInfoServlet extends HttpServlet {
         response.setContentType("application/json");
 
         String email = request.getParameter("email");
-        User user = IorEngine.getUserInfo(email);
-        User responseUser = new User(email, null, null, user.getRegisterDate());
+        List<String> partners = IorEngine.getUserPartners(email);
 
-        String resp = new Gson().toJson(responseUser);
+        String resp = new Gson().toJson(partners);
         try (PrintWriter out = response.getWriter()) {
             out.println(resp);
             out.flush();
@@ -47,7 +42,4 @@ public class UserInfoServlet extends HttpServlet {
 
         processRequest(request, response);
     }
-
-
-
 }

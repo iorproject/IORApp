@@ -150,7 +150,7 @@ public class FirebaseDao implements ReceiptsDAO{
         final String userPath = "Users";
         response = firebase.get(userPath);
         Gson json = new Gson();
-        CredentialsResponse credentialsResponse = json.fromJson(response.getRawBody(),CredentialsResponse.class);
+        CredentialsResponse credentialsResponse = json.fromJson(decodeString(response.getRawBody()),CredentialsResponse.class);
         return credentialsResponse.getCredentials().values().stream()
                 .collect(Collectors.toList());
     }

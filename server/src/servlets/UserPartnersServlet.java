@@ -1,10 +1,9 @@
 package servlets;
 
+
 import com.google.gson.Gson;
 import engine.IorEngine;
 import main.java.DB.Entities.User;
-import servletsUtils.Constants;
-import servletsUtils.ServletsUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,15 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-@WebServlet(name = "RegisterUserServlet", urlPatterns = {"/registerUser"})
-public class RegisterUserServlet extends HttpServlet {
+@WebServlet(name = "UserPartnersServlet", urlPatterns = {"/userPartners"})
+
+public class UserPartnersServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -29,22 +24,14 @@ public class RegisterUserServlet extends HttpServlet {
         response.setContentType("application/json");
 
         String email = request.getParameter("email");
-        String accessToken = request.getParameter(Constants.ACCESS_TOKEN);
-        String refreshToken = request.getParameter(Constants.REFRESH_TOKEN);
-        String registerDate = request.getParameter(Constants.REGISTER_DATE);
+        List<String> partners = IorEngine.getUserPartners(email);
 
-        DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
-        Date date = null;
-        try {
-            date = dateFormat.parse(registerDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        String resp = new Gson().toJson(partners);
+        try (PrintWriter out = response.getWriter()) {
+            out.println(resp);
+            out.flush();
         }
-
-        IorEngine.registerUser(new User(email, accessToken, refreshToken, date));
-
     }
-
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -55,6 +42,4 @@ public class RegisterUserServlet extends HttpServlet {
 
         processRequest(request, response);
     }
-
-
 }

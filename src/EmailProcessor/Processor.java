@@ -8,8 +8,10 @@ import gmailApiWrapper.EmailMessage;
 import gmailApiWrapper.IEmailApiWrapper;
 import gmailApiWrapper.eEmailApi;
 import main.java.DB.DBHandler;
+import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.TotalIndicator;
 import main.java.DB.Entities.User;
+import main.java.DB.Entities.eContentType;
 import main.java.DB.ReceiptsDAO;
 import main.java.DB.error.FirebaseException;
 
@@ -23,78 +25,77 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Processor {
-    public void Run() throws Throwable {
+    private ApproveIndicator approveIndicators;
+    private TotalIndicator totalIndicators;
+    private ReceiptsDAO dbHandler;
+
+    public void Run(){
+        init();
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        ReceiptsDAO dbHandler = DBHandler.getInstance();
-        ApproveIndicator approveIndicators = dbHandler.getApprovalIndicators();
-        TotalIndicator totalIndicators = dbHandler.getTotalIndicator();
-//        Runnable mailProcess = () -> {
-//            try {
-////                dbHandler.getAllUsers().forEach(user -> {
-//                    new Thread(() -> {
-//                        try{
-//                            IEmailRecognition emailRecognition = EmailRecognitionBuilder.Build(approveIndicators, totalIndicators);
-//                            IEmailApiWrapper emailApiWrapper = EmailApiWrapperFactory.createEmailApiWrapper(
-//                                    eEmailApi.GMAIL,
-//                                    "shikoba21@gmail.com",
-//                                    "ya29.GltUB3m-1ma9GCrjY8tuFzngd-PAEGgGXZq75fNzAo1uhAR-TDNofdbjKSCFXERZoBJhTZPk0-oSvLB3_DwPC7iy4iM3_3ah3IG-UWkjXRga7gicDi5W-t0jqELa",
-//                                    "1/DvWTHOyK03h8VvJi6IXtZ12JbyvG8ir0VHtj4DLX528");
-//                            List<EmailMessage> messages = null;
-////                            messages = emailApiWrapper.getMessages(
-////                                    dbHandler.getLastSearchMailTime("shikoba21@gmail.com"));
-//                            messages = emailApiWrapper.getMessages(new Date(0));
-//                            EmailMessage lastEmailMessage = messages.
-//                                    stream().
-//                                    max(Comparator.comparing(EmailMessage::getDate)).
-//                                    get();
-//                            for(EmailMessage emailMessage : messages){
-//                                emailRecognition.Recognize(emailMessage);
-//                            }
-//                            dbHandler.setLastSearchMailTime("shikoba21@gmail.com", lastEmailMessage.getDate());
-//                        } catch (Exception | FirebaseException ignored){
-//
-//                        }
-//
-//                    }).run();
-////                });
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            System.out.println("Task #2 is running");
-//        };
-//        service.scheduleAtFixedRate(mailProcess, 0, 5, TimeUnit.MINUTES);
+        service.scheduleAtFixedRate(this::runAllUsers, 0, 1, TimeUnit.MINUTES);
+    }
 
-        dbHandler.getAllUsers().forEach(user -> {
-            new Thread(() -> {
-                try{
-                    IEmailRecognition emailRecognition = EmailRecognitionBuilder.Build(approveIndicators, totalIndicators);
-                    User userCredential = dbHandler.getCredentialUser(user.getEmail());
-                    IEmailApiWrapper emailApiWrapper = EmailApiWrapperFactory.createEmailApiWrapper(
-                            eEmailApi.GMAIL,
-                            user.getEmail(),
-                            userCredential.getAccessToken(),
-                            userCredential.getRefreshToken());
-                    List<EmailMessage> messages = null;
-                    Date from = dbHandler.getLastSearchMailTime(user.getEmail());
-                    from = from == null ? new Date(0) : from;
-                    messages = emailApiWrapper.getMessages(from);
-                    EmailMessage lastEmailMessage = null;
-                    try {
-                        lastEmailMessage = messages.
-                                stream().
-                                max(Comparator.comparing(EmailMessage::getDate)).get();
-                    }catch (Exception ignored){}
+    private void init() {
+        dbHandler = DBHandler.getInstance();
+        try {
+            approveIndicators = dbHandler.getApprovalIndicators();
+            totalIndicators = dbHandler.getTotalIndicator();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
 
-                    for(EmailMessage emailMessage : messages){
-                        emailRecognition.Recognize(emailMessage);
-                    }
-                    Date date = lastEmailMessage != null ? lastEmailMessage.getDate() : null;
-                    dbHandler.setLastSearchMailTime(user.getEmail(), date);
-                } catch (Throwable throwable) {
-                    throwable.printStackTrace();
-                }
+    private void runAllUsers(){
+        System.out.println("*******runAllUsers***********");
+        try {
+            dbHandler.getAllUsers().forEach(this::runUser);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
 
-            }).run();
-        });
+    private void runUser(User user) {
+        new Thread(() -> {
+            try{
+                checkUserMails(user);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+
+        }).run();
+    }
+
+    private void checkUserMails(User user) throws Throwable {
+        Date now = new Date();
+        IEmailRecognition emailRecognition = EmailRecognitionBuilder.Build(approveIndicators, totalIndicators);
+        List<EmailMessage> messages = setEmailMessages(user);
+        for(EmailMessage emailMessage : messages){
+            emailRecognition.Recognize(emailMessage);
+        }
+        setLastServed(messages, user, now);
+    }
+
+    private List<EmailMessage> setEmailMessages(User user) throws Throwable {
+        IEmailApiWrapper emailApiWrapper = setEmailWrapper(user);
+        Date from = dbHandler.getLastSearchMailTime(user.getEmail());
+        from = from == null ? new Date(0) : from;
+        return emailApiWrapper.getMessages(from);
+    }
+
+    private IEmailApiWrapper setEmailWrapper(User user) throws Throwable {
+        User userCredential = dbHandler.getCredentialUser(user.getEmail());
+        return EmailApiWrapperFactory.createEmailApiWrapper(
+                eEmailApi.GMAIL,
+                user.getEmail(),
+                userCredential.getAccessToken(),
+                userCredential.getRefreshToken());
+    }
+
+    private void setLastServed(List<EmailMessage> messages, User user, Date now) throws Throwable {
+        EmailMessage lastEmailMessage = messages.
+                stream().
+                max(Comparator.comparing(EmailMessage::getDate)).get();
+        Date date = lastEmailMessage != null ? lastEmailMessage.getDate() : now;
+        dbHandler.setLastSearchMailTime(user.getEmail(), date);
     }
 }

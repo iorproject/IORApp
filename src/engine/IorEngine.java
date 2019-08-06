@@ -1,6 +1,7 @@
 package engine;
 
 import main.java.DB.DBHandler;
+import main.java.DB.Entities.CompanyLogo;
 import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.User;
 import main.java.DB.error.FirebaseException;
@@ -81,5 +82,21 @@ public class IorEngine {
         }
 
         return requestsEmails;
+    }
+
+    public static List<CompanyLogo> getUserCompanies() {
+
+        List<CompanyLogo> companies = null;
+        List<String> requestsEmails = new ArrayList<>();
+
+        try {
+            companies = DBHandler.getInstance().getAllCompaniesLogo();
+
+        }
+        catch (Throwable t) {
+
+        }
+
+        return companies;
     }
 }

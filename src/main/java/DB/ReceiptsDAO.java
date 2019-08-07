@@ -13,7 +13,9 @@ public interface ReceiptsDAO {
     ApproveIndicator getApprovalIndicators() throws Throwable;
     TotalIndicator getTotalIndicator() throws Throwable;
     List<Receipt> getUserReceipts(String email) throws Throwable;
+    int getAmountOfUserReceipts(String email) throws  Throwable;
     List<Receipt> getCompanyReceiptsByUser(String email, final String company) throws Throwable;
+    int getAmountOfCompanyReceiptsByUser(String email, String company) throws Throwable;
     void setLastSearchMailTime(String email, Date lastUpdatedSearchTime) throws Throwable;
     Date getLastSearchMailTime(String email) throws Throwable;
     void insertReceipt(Receipt receipt) throws Throwable;

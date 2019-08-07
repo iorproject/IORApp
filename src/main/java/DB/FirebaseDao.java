@@ -279,4 +279,14 @@ public class FirebaseDao implements ReceiptsDAO{
                 .map(logo -> new CompanyLogo(logo.getKey(),logo.getValue()))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public int getAmountOfUserReceipts(String email) throws Throwable {
+        return getUserReceipts(email).size();
+    }
+
+    @Override
+    public int getAmountOfCompanyReceiptsByUser(String email, String company) throws Throwable {
+        return getCompanyReceiptsByUser(email,company).size();
+    }
 }

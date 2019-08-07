@@ -117,4 +117,14 @@ public class DBHandler implements ReceiptsDAO{
     public List<CompanyLogo> getAllCompaniesLogo() throws Throwable{
         return FirebaseDao.getInstance().getAllCompaniesLogo();
     }
+
+    @Override
+    public int getAmountOfUserReceipts(String email) throws Throwable {
+        return FirebaseDao.getInstance().getAmountOfUserReceipts(email);
+    }
+
+    @Override
+    public int getAmountOfCompanyReceiptsByUser(String email, String company) throws Throwable {
+        return FirebaseDao.getInstance().getAmountOfCompanyReceiptsByUser(email,company);
+    }
 }

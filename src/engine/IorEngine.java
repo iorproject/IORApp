@@ -45,7 +45,7 @@ public class IorEngine {
         List<String> res = null;
 
         try {
-            partners = DBHandler.getInstance().getAllFriendshipsByUser(email);
+            partners = DBHandler.getInstance().getAllAccessPermissionFriendshipsByUser(email);
             if (partners != null) {
 
                 res = new ArrayList<>();

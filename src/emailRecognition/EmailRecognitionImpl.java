@@ -75,7 +75,8 @@ public class EmailRecognitionImpl implements IEmailRecognition{
     private void saveReceipt(EmailMessage emailMessage, eContentType eType, byte[] bytes) {
         Receipt receipt = new Receipt(hostName, emailMessage.getFrom(), eType, bytes, emailMessage.getDate(),bodyRecognition.getCurrency(), bodyRecognition.getTotalPrice());
         try {
-            dbHandler.insertReceipt(receipt);
+            //TODO: send my email to insert Receipt
+            dbHandler.insertReceipt("ior46800@gmail.com",receipt);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

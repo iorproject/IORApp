@@ -59,8 +59,8 @@ public class DBHandler implements ReceiptsDAO{
     }
 
     @Override
-    public void insertReceipt(Receipt receipt) throws Throwable {
-        FirebaseDao.getInstance().insertReceipt(receipt);
+    public void insertReceipt(String email, Receipt receipt) throws Throwable {
+        FirebaseDao.getInstance().insertReceipt(email,receipt);
     }
 
     @Override
@@ -79,8 +79,13 @@ public class DBHandler implements ReceiptsDAO{
     }
 
     @Override
-    public List<User> getAllFriendshipsByUser(String email) throws Throwable {
-        return FirebaseDao.getInstance().getAllFriendshipsByUser(email);
+    public List<User> getAllAccessPermissionFriendshipsByUser(String email) throws Throwable {
+        return FirebaseDao.getInstance().getAllAccessPermissionFriendshipsByUser(email);
+    }
+
+    @Override
+    public List<User> getAllViewingPermissionFriendshipsByUser(String email) throws Throwable {
+        return FirebaseDao.getInstance().getAllViewingPermissionFriendshipsByUser(email);
     }
 
     @Override
@@ -126,5 +131,15 @@ public class DBHandler implements ReceiptsDAO{
     @Override
     public int getAmountOfCompanyReceiptsByUser(String email, String company) throws Throwable {
         return FirebaseDao.getInstance().getAmountOfCompanyReceiptsByUser(email,company);
+    }
+
+    @Override
+    public int getAmountOfAccessFriendships(String email) throws Throwable {
+        return FirebaseDao.getInstance().getAmountOfAccessFriendships(email);
+    }
+
+    @Override
+    public int getAmountOfViewingFriendships(String email) throws Throwable {
+        return FirebaseDao.getInstance().getAmountOfViewingFriendships(email);
     }
 }

@@ -42,14 +42,18 @@ public class Demo {
         dataMap.put("omerblechman@gmail.com",dataMap2);*/
         //firebaseDao.registerUser(user);
         try {
+/*
             List<CompanyLogo> c = firebaseDao.getAllCompaniesLogo();
             System.out.println(c);
+*/
             //firebaseDao.sendFriendshipRequest("ior46800@gmail.com","omer@gmail.com");
-//            firebaseDao.acceptFriendshipRequest("omer@gmail.com","ior46800@gmail.com");
-//            firebaseDao.acceptFriendshipRequest("omerblechman@gmail.com","ior46800@gmail.com");
+            firebaseDao.acceptFriendshipRequest("omer@gmail.com","ior46800@gmail.com");
+            firebaseDao.acceptFriendshipRequest("omerblechman@gmail.com","ior46800@gmail.com");
+            firebaseDao.acceptFriendshipRequest("ior46800@gmail.com","omerblechman@gmail.com");
 //
-            List<User> f =firebaseDao.getAllRequestsByUser("ior46800@gmail.com");
-            System.out.println(f);
+           // List<User> f =firebaseDao.getAllViewingPermissionFriendshipsByUser("ior46800@gmail.com");
+//            List<User> f =firebaseDao.getAllRequestsByUser("ior46800@gmail.com");
+          //  System.out.println(f);
 
         } catch (Throwable throwable) {
             throwable.printStackTrace();

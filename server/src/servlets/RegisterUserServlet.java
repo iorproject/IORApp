@@ -27,7 +27,7 @@ public class RegisterUserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         response.setContentType("application/json");
-
+        int x = 5;
         String email = request.getParameter("email");
         String accessToken = request.getParameter(Constants.ACCESS_TOKEN);
         String refreshToken = request.getParameter(Constants.REFRESH_TOKEN);

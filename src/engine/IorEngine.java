@@ -19,7 +19,6 @@ public class IorEngine {
     public static void registerUser(User user) {
         try {
             DBHandler.getInstance().registerUser(user);
-
         }
         catch (Throwable e) {
         }
@@ -28,7 +27,6 @@ public class IorEngine {
     public static User getUserInfo(String email) {
 
         User user = null;
-
         try {
             user = DBHandler.getInstance().getCredentialUser(email);
         }
@@ -47,20 +45,32 @@ public class IorEngine {
         try {
             partners = DBHandler.getInstance().getAllAccessPermissionFriendshipsByUser(email);
             if (partners != null) {
-
                 res = new ArrayList<>();
                 for(User user : partners) {
-
                     res.add(user.getEmail());
                 }
             }
         }
         catch (Throwable e) {
-
-
         }
 
         return res;
+    }
+
+    public static void sendUserShareRequest(String receiverEmail, String requesterEmail) throws Throwable {
+            DBHandler.getInstance().sendFriendshipRequest(receiverEmail,requesterEmail);
+    }
+
+    public static void acceptUserShareRequest(String receiverEmail, String requesterEmail) throws Throwable {
+            DBHandler.getInstance().acceptFriendshipRequest(receiverEmail,requesterEmail);
+    }
+
+    public static void removeUserFriendship(String requesterEmail, String toDeleteEmail) throws Throwable {
+        DBHandler.getInstance().removeFriendShip(requesterEmail,toDeleteEmail);
+    }
+
+    public static void rejectUserShareRequest(String receiverEmail, String requesterEmail) throws Throwable {
+        DBHandler.getInstance().rejectFriendshipRequest(receiverEmail,requesterEmail);
     }
 
     public static List<String> getUserShareRequests(String email) {

@@ -32,13 +32,22 @@ public class UserShareRequests extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        processRequest(request, response);
+        sendUserShareRequest(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         processRequest(request, response);
+    }
+
+    protected void sendUserShareRequest(HttpServletRequest request, HttpServletResponse response) {
+        String requesterEmail = request.getParameter("requesterEmail");
+        String receiverEmail = request.getParameter("receiverEmail");
+        try {
+            IorEngine.sendUserShareRequest(receiverEmail, requesterEmail);
+        } catch (Throwable throwable) {
+            response.setStatus(500);
+        }
     }
 
 

@@ -8,6 +8,7 @@ public abstract class EmailMessage {
     private String id;
     private String subject;
     private String from;
+    private String to;
     private Date date;
     private String content;
     private List<EmailAttachment> attachments;
@@ -61,5 +62,13 @@ public abstract class EmailMessage {
 
     public List<EmailAttachment> getAttachments() {
         return attachments;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
     }
 }

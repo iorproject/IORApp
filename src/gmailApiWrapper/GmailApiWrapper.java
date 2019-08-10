@@ -368,10 +368,12 @@ public class GmailApiWrapper implements IEmailApiWrapper {
             String subject = headers.stream().filter(h -> h.getName().equals("Subject")).collect(Collectors.toList()).get(0).getValue();
             String from = headers.stream().filter(h -> h.getName().equals("From")).collect(Collectors.toList()).get(0).getValue();
             from = from.substring(from.indexOf('<') + 1, from.lastIndexOf('>'));
+            String to = headers.stream().filter(h -> h.getName().equals("To")).collect(Collectors.toList()).get(0).getValue();
 
             gmailMessage.setSubject(subject);
             gmailMessage.setDate(date);
             gmailMessage.setFrom(from);
+            gmailMessage.setTo(to);
 
 
             String body = getBody(m);

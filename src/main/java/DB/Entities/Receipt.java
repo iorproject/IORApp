@@ -13,13 +13,27 @@ public class Receipt implements Serializable {
     private int totalScoreIndicator;
     private String currency;
     private float totalPrice;
+    private String fileName;
+    private String receiptNumber;
+
+    public Receipt(String companyName, String email, eContentType type, byte[] body,
+                   Date creationDate, String currency, float totalPrice, String fileName, String receiptNumber) {
+        this.email = email;
+        this.type = type;
+        this.body = body;
+        this.creationDate = creationDate;
+        this.companyName = companyName;
+        this.currency = currency;
+        this.totalPrice = totalPrice;
+        this.fileName = fileName;
+        this.receiptNumber = receiptNumber;
+    }
 
     public Receipt(String companyName, String email, eContentType type, byte[] body, Date creationDate, String currency, float totalPrice) {
         this.email = email;
         this.type = type;
         this.body = body;
         this.creationDate = creationDate;
-        this.totalScoreIndicator = totalScoreIndicator;
         this.companyName = companyName;
         this.currency = currency;
         this.totalPrice = totalPrice;
@@ -73,5 +87,13 @@ public class Receipt implements Serializable {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getReceiptNumber() {
+        return receiptNumber;
     }
 }

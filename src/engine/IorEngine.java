@@ -1,6 +1,7 @@
 package engine;
 
 import main.java.DB.DBHandler;
+import main.java.DB.Entities.CompanyLogo;
 import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.User;
 import main.java.DB.error.FirebaseException;
@@ -35,6 +36,37 @@ public class IorEngine {
         }
 
         return user;
+    }
+
+    public static List<CompanyLogo> getUserCompanies() {
+
+        List<CompanyLogo> companies = null;
+        List<String> requestsEmails = new ArrayList<>();
+
+        try {
+            companies = DBHandler.getInstance().getAllCompaniesLogo();
+
+        }
+        catch (Throwable t) {
+
+        }
+
+        return companies;
+    }
+
+    public static List<Receipt> getCompanyReceipts(String email, String companyName) {
+
+        List<Receipt> receipts = null;
+        try {
+            receipts = DBHandler.getInstance().getCompanyReceiptsByUser(email, companyName);
+
+        }
+        catch (Throwable t) {
+
+
+        }
+
+        return receipts;
     }
 
     public static List<String> getUserPartners(String email) {

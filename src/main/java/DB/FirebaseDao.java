@@ -98,12 +98,15 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     @Override
-    public List<Receipt> getCompanyReceiptsByUser(String email,final String company) throws Throwable{
-        UserReceipts receipts = getAllReceipts(email);
-        if(receipts == null || !receipts.getUserReceipts().containsKey(company)){
-            return new ArrayList<>();
-        }
-        return new ArrayList<>(receipts.getUserReceipts().get(company).values());
+    public List<Receipt> getCompanyReceiptsByUser(String email,String company) throws Throwable{
+        email = encodeString(email);
+        company = encodeString(company);
+        final String userCompanyReceipts = "Users/receipts/" + email + "/companyList/" + company;
+        response = firebase.get(userCompanyReceipts);
+        Gson json = new Gson();
+        String decodeString = decodeString(response.getRawBody());
+        UserReceiptsByCompany receipts = json.fromJson(decodeString,UserReceiptsByCompany.class);
+        return receipts.getCompanyReceipts().stream().collect(Collectors.toList());
     }
 
     @Override
@@ -151,7 +154,7 @@ public class FirebaseDao implements ReceiptsDAO{
     @Override
     public void insertReceipt(String email, Receipt receipt) throws Throwable {
         receipt = encodeReceipt(receipt);
-        final String userCompanyReceipts = "Users/receipts/" + receipt.getEmail() + "/companyList/" + receipt.getCompanyName();
+        final String userCompanyReceipts = "Users/receipts/" + receipt.getEmail() + "/companyList/" + receipt.getCompanyName() + "/receipt";
         response = firebase.post(userCompanyReceipts,new Gson().toJson(receipt));
         getCompanyReceiptsByUser(receipt.getEmail(),receipt.getCompanyName());
     }

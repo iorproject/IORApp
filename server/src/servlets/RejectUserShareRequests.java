@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "UserShareRequestsServlet", urlPatterns = {"/userShareRequests/reject"})
+@WebServlet(name = "UserShareRequestRejectsServlet", urlPatterns = {"/userShareRequests/reject"})
 
 public class RejectUserShareRequests extends HttpServlet {
 

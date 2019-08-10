@@ -109,4 +109,19 @@ public class IorEngine {
 
         return companies;
     }
+
+    public static List<Receipt> getCompanyReceipts(String email, String companyName) {
+
+        List<Receipt> receipts = null;
+        try {
+            receipts = DBHandler.getInstance().getCompanyReceiptsByUser(email, companyName);
+
+        }
+        catch (Throwable t) {
+
+
+        }
+
+        return receipts;
+    }
 }

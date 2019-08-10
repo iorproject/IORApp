@@ -67,6 +67,15 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     @Override
+    public OrderNumberApproveIndicator getOrderNumberApproval() throws Throwable {
+        final String approveIdenticatorPath = "Identicators";
+        response = firebase.get( approveIdenticatorPath );
+        Gson json = new Gson();
+        String decodeString = decodeString(response.getRawBody());
+        return json.fromJson(decodeString,OrderNumberApproveIndicator.class);
+    }
+
+    @Override
     public TotalIndicator getTotalIndicator() throws Throwable {
         final String totalIndicatorPath = "Identicators";
         response = firebase.get( totalIndicatorPath );

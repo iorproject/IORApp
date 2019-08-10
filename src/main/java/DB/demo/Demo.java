@@ -29,6 +29,107 @@ public class Demo {
         Receipt r = new Receipt("Paypal","ior46800@gmail.com",eContentType.STRING,bytes,new Date(),"US",300);
         //User user = new User("omer@gmail.com","111","1111",new Date());
         FirebaseDao firebaseDao = FirebaseDao.getInstance();
+        try{
+            OrderNumberApproveIndicator d = firebaseDao.getOrderNumberApproval();
+            System.out.println(d);
+        }
+        catch (Throwable e){
+
+        }
+
+/*        Map<String, Object> dataMap = new LinkedHashMap<String, Object>();
+        dataMap.put("מספר הזמנה",5);
+        dataMap.put("מס' הזמנה",5);
+        dataMap.put("מס_!_ הזמנה",5);
+        dataMap.put("מספר ההזמנה",5);
+        dataMap.put("מס' ההזמנה",5);
+        dataMap.put("מס_!_ ההזמנה",5);
+        dataMap.put("מספר אישור",5);
+        dataMap.put("מס' אישור",5);
+        dataMap.put("מס_!_ אישור",5);
+        dataMap.put("מספר האישור",5);
+        dataMap.put("מס' האישור",5);
+        dataMap.put("מס_!_ האישור",5);
+        dataMap.put("עסקה מספר",5);
+        dataMap.put("עסקה מס_!_",5);
+        dataMap.put("עסקה מס'",5);
+        dataMap.put("חשבונית מס___קבלה",10);
+        dataMap.put("חשבונית מס-קבלה",10);
+        dataMap.put("חשבונית מס - קבלה",10);
+        dataMap.put("חשבונית מס קבלה",10);
+        dataMap.put("חשבונית מס מספר",10);
+        dataMap.put("מספר הזמנה בפנקס",5);
+        dataMap.put("מספר אישור הזמנה",5);
+        dataMap.put("מס' אישור הזמנה",5);
+        dataMap.put("מס_!_ אישור הזמנה",5);
+        dataMap.put("הזמנתך מספר",5);
+        dataMap.put("מספר הזמנת אינטרנט",5);
+        dataMap.put("מס_!_ הזמנת אינטרנט",5);
+        dataMap.put("מס' הזמנת אינטרנט",5);
+        dataMap.put("מספר הזמנתך הוא",5);
+        dataMap.put("מס_!_ הזמנתך הוא",5);
+        dataMap.put("מס' הזמנתך הוא",5);
+        dataMap.put("קבלה מס'",10);
+        dataMap.put("קבלה מספר",10);
+        dataMap.put("קבלה מס_!_",10);
+        dataMap.put("הזמנה מספר",5);
+        dataMap.put("מספר חשבונית",10);
+        dataMap.put("מס' חשבונית",10);
+        dataMap.put("מס_!_ חשבונית",10);
+        dataMap.put("order",5);
+        dataMap.put("order number",5);
+        dataMap.put("order num_!_",5);
+        dataMap.put("order num",5);
+        dataMap.put("order no_!_",5);
+        dataMap.put("order no",5);
+        dataMap.put("booking number",5);
+        dataMap.put("booking num_!_",5);
+        dataMap.put("booking num",5);
+        dataMap.put("booking no_!_",5);
+        dataMap.put("booking no",5);
+        dataMap.put("reference number",5);
+        dataMap.put("reference num_!_",5);
+        dataMap.put("reference num",5);
+        dataMap.put("reference no_!_",5);
+        dataMap.put("reference no",5);
+        dataMap.put("transfer number",10);
+        dataMap.put("transfer num_!_",10);
+        dataMap.put("transfer num",10);
+        dataMap.put("transfer no_!_",10);
+        dataMap.put("receipt no",10);
+        dataMap.put("transfer-receipt number",10);
+        dataMap.put("transfer-receipt num_!_",10);
+        dataMap.put("transfer-receipt num",10);
+        dataMap.put("transfer-receipt no_!_",10);
+        dataMap.put("transfer-receipt no",10);
+        dataMap.put("transfer receipt number",10);
+        dataMap.put("transfer receipt num_!_",10);
+        dataMap.put("transfer receipt num",10);
+        dataMap.put("transfer receipt no_!_",10);
+        dataMap.put("transfer receipt no",10);
+        dataMap.put("transfer - receipt number",10);
+        dataMap.put("transfer - receipt num_!_",10);
+        dataMap.put("transfer - receipt num",10);
+        dataMap.put("transfer - receipt no_!_",10);
+        dataMap.put("transfer - receipt no",10);
+        dataMap.put("receipt-transfer number",10);
+        dataMap.put("receipt-transfer num_!_",10);
+        dataMap.put("receipt-transfer num",10);
+        dataMap.put("receipt-transfer no_!_",10);
+        dataMap.put("receipt-transfer no",10);
+        dataMap.put("receipt transfer number",10);
+        dataMap.put("receipt transfer num_!_",10);
+        dataMap.put("receipt transfer num",10);
+        dataMap.put("receipt transfer no_!_",10);
+        dataMap.put("receipt transfer no",10);
+        dataMap.put("receipt - transfer number",10);
+        dataMap.put("receipt - transfer num_!_",10);
+        dataMap.put("receipt - transfer num",10);
+        dataMap.put("receipt - transfer no_!_",10);
+        dataMap.put("receipt - transfer no",10);
+        String firebase_baseUrl = "https://iorproject.firebaseio.com/";
+        Firebase firebase = new Firebase( firebase_baseUrl );
+        firebase.put( "Identicators/orderNumberApprovalList", dataMap );*/
         /*try {
             firebaseDao.insertReceipt(r);
         } catch (Throwable throwable) {
@@ -226,7 +327,7 @@ public class Demo {
         dataMap.put("15",dataMap3);
         dataMap.put("5",dataMap4);
         dataMap.put("20",dataMap5);*/
-      //  firebase.put( "Identicators/approvalList", dataMap5 );
+      //  firebase.put( "Identicators/approvedNumberOfReceiptList", dataMap );
         /*response = firebase.get( "Identicators/Totals");
         System.out.println(response);*/
         //firebase.put( "Identicators/approvals", dataMap5 );

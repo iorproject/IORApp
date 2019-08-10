@@ -1,10 +1,7 @@
 package main.java.DB;
 
 import dbObjects.ApproveIndicator;
-import main.java.DB.Entities.CompanyLogo;
-import main.java.DB.Entities.Receipt;
-import main.java.DB.Entities.TotalIndicator;
-import main.java.DB.Entities.User;
+import main.java.DB.Entities.*;
 
 import java.util.Date;
 import java.util.List;
@@ -12,6 +9,7 @@ import java.util.List;
 public interface ReceiptsDAO {
     ApproveIndicator getApprovalIndicators() throws Throwable;
     TotalIndicator getTotalIndicator() throws Throwable;
+    OrderNumberApproveIndicator getOrderNumberApproval() throws Throwable;
     List<Receipt> getUserReceipts(String email) throws Throwable;
     int getAmountOfUserReceipts(String email) throws  Throwable;
     List<Receipt> getCompanyReceiptsByUser(String email, final String company) throws Throwable;

@@ -1,10 +1,7 @@
 package main.java.DB;
 
 import dbObjects.ApproveIndicator;
-import main.java.DB.Entities.CompanyLogo;
-import main.java.DB.Entities.Receipt;
-import main.java.DB.Entities.TotalIndicator;
-import main.java.DB.Entities.User;
+import main.java.DB.Entities.*;
 import main.java.DB.error.JacksonUtilityException;
 
 import java.util.Date;
@@ -31,6 +28,11 @@ public class DBHandler implements ReceiptsDAO{
     @Override
     public ApproveIndicator getApprovalIndicators() throws Throwable {
         return FirebaseDao.getInstance().getApprovalIndicators();
+    }
+
+    @Override
+    public OrderNumberApproveIndicator getOrderNumberApproval() throws Throwable {
+        return FirebaseDao.getInstance().getOrderNumberApproval();
     }
 
     @Override

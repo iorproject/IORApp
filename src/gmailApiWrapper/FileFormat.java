@@ -4,5 +4,6 @@ public enum FileFormat {
 
     PDF,
     DOCX,
-    XLSX
+    XLSX,
+    GIF
 }

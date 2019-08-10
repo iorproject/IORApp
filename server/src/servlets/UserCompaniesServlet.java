@@ -2,6 +2,7 @@ package servlets;
 
 import com.google.gson.Gson;
 import engine.IorEngine;
+import main.java.DB.Entities.CompanyLogo;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,19 +13,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-@WebServlet(name = "UserShareRequestsServlet", urlPatterns = {"/userShareRequests"})
+@WebServlet(name = "UserCompaniesServlet", urlPatterns = {"/userCompanies"})
 
-public class UserShareRequests extends HttpServlet {
+public class UserCompaniesServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         response.setContentType("application/json");
 
-        String email = request.getParameter("email");
-        List<String> shareRequests = IorEngine.getUserShareRequests(email);
+        List<CompanyLogo> companies = IorEngine.getUserCompanies();
 
-        String resp = new Gson().toJson(shareRequests);
+        String resp = new Gson().toJson(companies);
         try (PrintWriter out = response.getWriter()) {
             out.println(resp);
             out.flush();
@@ -32,22 +32,13 @@ public class UserShareRequests extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        sendUserShareRequest(request, response);
+
+        processRequest(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         processRequest(request, response);
-    }
-
-    protected void sendUserShareRequest(HttpServletRequest request, HttpServletResponse response) {
-        String requesterEmail = request.getParameter("requesterEmail");
-        String receiverEmail = request.getParameter("receiverEmail");
-        try {
-            IorEngine.sendUserShareRequest(receiverEmail, requesterEmail);
-        } catch (Throwable throwable) {
-            response.setStatus(500);
-        }
     }
 
 

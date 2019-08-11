@@ -88,13 +88,16 @@ public class FirebaseDao implements ReceiptsDAO{
 
     @Override
     public List<Receipt> getUserReceipts(String email) throws Throwable{
+        List<Receipt> userReceipts = new ArrayList<>();
         UserReceipts receipts = getAllReceipts(email);
         if(receipts == null){
             return new ArrayList<>();
         }
-        return receipts.getUserReceipts().values().stream()
-                .map(receiptsCollection -> receiptsCollection.values())
-                .collect(ArrayList::new,List::addAll,List::addAll);
+        receipts.getUserReceipts().values()
+                .forEach(receiptsMap -> receiptsMap.values().forEach(
+                        receiptsCollection -> receiptsCollection.values().forEach(
+                                receiptList -> userReceipts.add(receiptList))));
+        return userReceipts;
     }
 
     @Override
@@ -106,7 +109,7 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
         UserReceiptsByCompany receipts = json.fromJson(decodeString,UserReceiptsByCompany.class);
-        return receipts.getCompanyReceipts().stream().collect(Collectors.toList());
+        return receipts.getCompanyReceipts();
     }
 
     @Override
@@ -153,10 +156,10 @@ public class FirebaseDao implements ReceiptsDAO{
 
     @Override
     public void insertReceipt(String email, Receipt receipt) throws Throwable {
+        receipt.setId(receipt.getCreationDate().getTime());
         receipt = encodeReceipt(receipt);
-        final String userCompanyReceipts = "Users/receipts/" + receipt.getEmail() + "/companyList/" + receipt.getCompanyName() + "/receipt";
-        response = firebase.post(userCompanyReceipts,new Gson().toJson(receipt));
-        getCompanyReceiptsByUser(receipt.getEmail(),receipt.getCompanyName());
+        final String userCompanyReceipts = "Users/receipts/" + receipt.getEmail() + "/companyList/" + receipt.getCompanyName() + "/receipt/" + receipt.getId();
+        response = firebase.put(userCompanyReceipts,new Gson().toJson(receipt));
     }
 
     @Override

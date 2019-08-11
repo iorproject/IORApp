@@ -5,6 +5,7 @@ import java.util.Date;
 
 public class Receipt implements Serializable {
 
+    private long id;
     private String email;
     private String companyName;
     private eContentType type;
@@ -95,5 +96,13 @@ public class Receipt implements Serializable {
 
     public String getReceiptNumber() {
         return receiptNumber;
+    }
+
+    public void setId(long id){
+        this.id = id;
+    }
+
+    public long getId(){
+        return id;
     }
 }

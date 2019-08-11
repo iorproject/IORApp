@@ -51,6 +51,11 @@ public class DBHandler implements ReceiptsDAO{
     }
 
     @Override
+    public AttachmentReceipt getCompanyReceiptByUser(String email, String company, long id) throws Throwable {
+        return FirebaseDao.getInstance().getCompanyReceiptByUser(email,company,id);
+    }
+
+    @Override
     public void setLastSearchMailTime(String email, Date lastUpdatedSearchTime) throws Throwable {
         FirebaseDao.getInstance().setLastSearchMailTime(email,lastUpdatedSearchTime);
     }
@@ -61,7 +66,7 @@ public class DBHandler implements ReceiptsDAO{
     }
 
     @Override
-    public void insertReceipt(String email, Receipt receipt) throws Throwable {
+    public void insertReceipt(String email, AttachmentReceipt receipt) throws Throwable {
         FirebaseDao.getInstance().insertReceipt(email,receipt);
     }
 

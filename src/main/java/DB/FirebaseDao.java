@@ -113,6 +113,16 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     @Override
+    public AttachmentReceipt getCompanyReceiptByUser(String email, String company, long id) throws Throwable {
+        final String userCompanyReceipts = "Users/receipts/" + email + "/companyList/" + company;
+        response = firebase.get(userCompanyReceipts);
+        Gson json = new Gson();
+        String decodeString = decodeString(response.getRawBody());
+        UserReceiptByCompany receipts = json.fromJson(decodeString,UserReceiptByCompany.class);
+        return receipts.getCompanyReceipt(Long.toString(id));
+    }
+
+    @Override
     public void setLastSearchMailTime(String email, Date lastUpdatedSearchTime) throws Throwable {
         email = encodeString(email);
         final String userCompanyReceipts = "Users/receipts/" + email + "/LastUpdatedSearchTime";
@@ -128,7 +138,7 @@ public class FirebaseDao implements ReceiptsDAO{
         return json.fromJson(response.getRawBody(),Date.class);
     }
 
-    private Receipt encodeReceipt(Receipt receipt){
+    private AttachmentReceipt encodeReceipt(AttachmentReceipt receipt){
         receipt.setCompanyName(encodeString(receipt.getCompanyName()));
         receipt.setEmail(encodeString(receipt.getEmail()));
         return  receipt;
@@ -155,7 +165,7 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     @Override
-    public void insertReceipt(String email, Receipt receipt) throws Throwable {
+    public void insertReceipt(String email, AttachmentReceipt receipt) throws Throwable {
         receipt.setId(receipt.getCreationDate().getTime());
         receipt = encodeReceipt(receipt);
         final String userCompanyReceipts = "Users/receipts/" + receipt.getEmail() + "/companyList/" + receipt.getCompanyName() + "/receipt/" + receipt.getId();

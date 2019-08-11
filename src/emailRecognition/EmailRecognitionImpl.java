@@ -5,6 +5,7 @@ import gmailApiWrapper.Attachment;
 import gmailApiWrapper.EmailAttachment;
 import gmailApiWrapper.FileFormat;
 import gmailApiWrapper.EmailMessage;
+import main.java.DB.Entities.AttachmentReceipt;
 import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.eContentType;
 import main.java.DB.error.FirebaseException;
@@ -73,7 +74,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
     }
 
     private void saveReceipt(EmailMessage emailMessage, eContentType eType, byte[] bytes) {
-        Receipt receipt = new Receipt(hostName, emailMessage.getFrom(), eType, bytes, emailMessage.getDate(),bodyRecognition.getCurrency(), bodyRecognition.getTotalPrice());
+        AttachmentReceipt receipt = new AttachmentReceipt(hostName, emailMessage.getFrom(), eType, bytes, emailMessage.getDate(),bodyRecognition.getCurrency(), bodyRecognition.getTotalPrice());
         try {
             //TODO: send my email to insert Receipt
             dbHandler.insertReceipt("ior46800@gmail.com",receipt);

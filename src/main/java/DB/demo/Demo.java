@@ -27,11 +27,13 @@ public class Demo {
 
         byte[] bytes = "Paypal".getBytes();
 
+/*
         Receipt r = new Receipt("Paypal","ior46800@gmail.com",eContentType.STRING,bytes,new Date(),"US",300);
         Thread.sleep(50);
         Receipt f = new Receipt("Ebay","ior46800@gmail.com",eContentType.STRING,bytes,new Date(),"US",300);
         Thread.sleep(50);
         Receipt q = new Receipt("Amazon","ior46800@gmail.com",eContentType.STRING,bytes,new Date(),"US",300);
+*/
 
         //User user = new User("omer@gmail.com","111","1111",new Date());
         FirebaseDao firebaseDao = FirebaseDao.getInstance();
@@ -41,10 +43,10 @@ public class Demo {
             firebaseDao.insertReceipt("ior46800@gmail.com",f);
             firebaseDao.insertReceipt("ior46800@gmail.com",q);
 */
-/*
+
             List<Receipt> d = firebaseDao.getCompanyReceiptsByUser("ior46800@gmail.com","Paypal");
             System.out.println(d);
-*/
+
         }
         catch (Throwable e){
 

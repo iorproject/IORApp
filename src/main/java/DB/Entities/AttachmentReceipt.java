@@ -3,12 +3,13 @@ package main.java.DB.Entities;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Receipt implements Serializable {
+public class AttachmentReceipt implements Serializable {
 
     private long id;
     private String email;
     private String companyName;
     private eContentType type;
+    private byte[] body;
     private Date creationDate;
     private int totalScoreIndicator;
     private String currency;
@@ -16,10 +17,11 @@ public class Receipt implements Serializable {
     private String fileName;
     private String receiptNumber;
 
-    public Receipt(String companyName, String email, eContentType type,
-                   Date creationDate, String currency, float totalPrice, String fileName, String receiptNumber) {
+    public AttachmentReceipt(String companyName, String email, eContentType type, byte[] body,
+                             Date creationDate, String currency, float totalPrice, String fileName, String receiptNumber) {
         this.email = email;
         this.type = type;
+        this.body = body;
         this.creationDate = creationDate;
         this.companyName = companyName;
         this.currency = currency;
@@ -28,9 +30,10 @@ public class Receipt implements Serializable {
         this.receiptNumber = receiptNumber;
     }
 
-    public Receipt(String companyName, String email, eContentType type, Date creationDate, String currency, float totalPrice) {
+    public AttachmentReceipt(String companyName, String email, eContentType type, byte[] body, Date creationDate, String currency, float totalPrice) {
         this.email = email;
         this.type = type;
+        this.body = body;
         this.creationDate = creationDate;
         this.companyName = companyName;
         this.currency = currency;
@@ -47,6 +50,10 @@ public class Receipt implements Serializable {
 
     public eContentType getType() {
         return type;
+    }
+
+    public byte[] getBody(){
+        return body;
     }
 
     public Date getCreationDate() {

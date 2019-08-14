@@ -32,5 +32,7 @@ public interface ReceiptsDAO {
     List<CompanyLogo> getAllCompaniesLogo() throws Throwable;
     int getAmountOfAccessFriendships(String email) throws Throwable;
     int getAmountOfViewingFriendships(String email) throws Throwable;
+    void saveUserDisplayPicture(String email, String encodeBitmap) throws Throwable;
+    String fetchUserDisplayPicture(String email) throws Throwable;
 
 }

@@ -149,4 +149,14 @@ public class DBHandler implements ReceiptsDAO{
     public int getAmountOfViewingFriendships(String email) throws Throwable {
         return FirebaseDao.getInstance().getAmountOfViewingFriendships(email);
     }
+
+    @Override
+    public void saveUserDisplayPicture(String email, String encodeBitmap) throws Throwable {
+        FirebaseDao.getInstance().saveUserDisplayPicture(email,encodeBitmap);
+    }
+
+    @Override
+    public String fetchUserDisplayPicture(String email) throws Throwable {
+        return FirebaseDao.getInstance().fetchUserDisplayPicture(email);
+    }
 }

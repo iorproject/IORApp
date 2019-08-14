@@ -347,4 +347,23 @@ public class FirebaseDao implements ReceiptsDAO{
     public int getAmountOfViewingFriendships(String email) throws Throwable {
         return getAllViewingPermissionFriendshipsByUser(email).size();
     }
+
+    @Override
+    public void saveUserDisplayPicture(String email, String encodeBitmap) throws Throwable {
+        email = encodeString(email);
+        encodeBitmap = encodeString(encodeBitmap);
+        final String userProfilePhotoPath = "Users/pictures/" + email + "/picture";
+        response = firebase.put(userProfilePhotoPath,new Gson().toJson(encodeBitmap));
+    }
+
+    @Override
+    public String fetchUserDisplayPicture(String email) throws Throwable {
+        email = encodeString(email);
+        final String userProfilePhotoPath = "Users/pictures/" + email;
+        response = firebase.get(userProfilePhotoPath);
+        Gson json = new Gson();
+        String decodeString = decodeString(response.getRawBody());
+        ProfilePicture profilePicture = json.fromJson(decodeString,ProfilePicture.class);
+        return profilePicture.getPicture();
+    }
 }

@@ -1,6 +1,7 @@
 package ReceiptBodyRecognition;
 
 import dbObjects.ApproveIndicator;
+import main.java.DB.Entities.OrderNumberApproveIndicator;
 import main.java.DB.Entities.TotalIndicator;
 
 import java.util.*;
@@ -9,12 +10,20 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
     private final int PASS_SCORE = 30;
     private final ApproveIndicator approveIndicators;
     private final TotalIndicator totalIndicators;
+    private final OrderNumberApproveIndicator orderNumberApproveIndicator;
     private float totalPrice;
     private String currency;
+    private String orderNumber;
 
-    public ReceiptBodyRecognitionImpl(ApproveIndicator approveIndicators, TotalIndicator totalIndicators){
+    public ReceiptBodyRecognitionImpl(
+            ApproveIndicator approveIndicators,
+            TotalIndicator totalIndicators,
+            OrderNumberApproveIndicator orderNumberApproveIndicator
+    ){
         this.approveIndicators = approveIndicators;
         this.totalIndicators = totalIndicators;
+        this.orderNumberApproveIndicator = orderNumberApproveIndicator;
+        this.orderNumber = null;
     }
 
     @Override
@@ -30,7 +39,17 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
     @Override
     public boolean recognize(String content) {
         String contentToLower = content.toLowerCase();
-        return recognizeTotal(contentToLower) && recognizeApproved(contentToLower);
+        contentToLower = contentToLower.replaceAll("\\u00a0"," ");
+        boolean recognized = recognizeTotal(contentToLower) && recognizeApproved(contentToLower);
+        if (recognized) {
+            orderNumber = findReceiptNumber(contentToLower);
+        }
+        return recognized;
+    }
+
+    @Override
+    public String getOrderNumber() {
+        return orderNumber;
     }
 
     private boolean recognizeTotal(String content) {
@@ -74,5 +93,48 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
             }
         }
         return false;
+    }
+
+    private String findReceiptNumber(String content) {
+        List<String> allStrings = new LinkedList<>();
+        orderNumberApproveIndicator.
+                getIndicators().
+                entrySet().
+                stream().
+                sorted(Comparator.comparing(Map.Entry::getValue)).
+                forEach(t -> allStrings.add(t.getKey()));
+        Collections.reverse(allStrings);
+        try{
+            String receiptNumberIdentifier = String.valueOf(allStrings.
+                    stream().
+                    filter(str -> content.contains(str)).
+                    findFirst().get());
+            return findOneReceiptNumberMatch(content, receiptNumberIdentifier);
+
+//            int index = content.lastIndexOf(receiptNumberIdentifier);
+//            if(!receiptNumberIdentifier.equals("")) {
+//                return PriceFinder.getReceiptNumber(content.substring(index));
+//            } else {
+//                return "";
+//            }
+        } catch (Exception e){
+            return "";
+        }
+    }
+
+    private String findOneReceiptNumberMatch(String content, String receiptNumberIdentifier) {
+        int index = 0;
+        index = content.indexOf(receiptNumberIdentifier);
+        while (content.length() > 1 && index != -1){
+            content = content.substring(index);
+            content = content.substring(receiptNumberIdentifier.length());
+            String match = PriceFinder.getReceiptNumber(content);
+            if(match != null)
+                return match;
+            content = content.substring(receiptNumberIdentifier.length());
+            index = content.indexOf(receiptNumberIdentifier);
+        }
+
+        return "";
     }
 }

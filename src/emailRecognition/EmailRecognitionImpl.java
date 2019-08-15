@@ -1,15 +1,12 @@
 package emailRecognition;
 
 import ReceiptBodyRecognition.IReceiptBodyRecognition;
-import gmailApiWrapper.Attachment;
 import gmailApiWrapper.EmailAttachment;
 import gmailApiWrapper.FileFormat;
 import gmailApiWrapper.EmailMessage;
-import main.java.DB.Entities.AttachmentReceipt;
 import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.eContentType;
-import main.java.DB.error.FirebaseException;
-import java.io.UnsupportedEncodingException;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import main.java.DB.*;
@@ -28,7 +25,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
 
     public void Recognize(EmailMessage emailMessage){
         init();
-        if(!validateFromField(emailMessage.getFrom()))
+        if(unValidateFromField(emailMessage.getFrom()))
             return;
         if(recognizeAttachments(emailMessage))
             return;
@@ -40,7 +37,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
         hostName = "";
     }
 
-    private boolean validateFromField(String from) {
+    private boolean unValidateFromField(String from) {
         String domain = from.substring(from.indexOf("@") + 1);
         hostName = domain.substring(0, domain.indexOf(".")).toLowerCase();
         return Arrays.stream(excludeMails).anyMatch(hostName::equals);
@@ -60,7 +57,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
 
     private boolean recognizeAttachmentContent(EmailMessage emailMessage, EmailAttachment attachment) {
         if(bodyRecognition.recognize(attachment.getString())){
-            saveReceipt(emailMessage, eContentType.PDF, attachment.getBytes());
+            saveReceipt(emailMessage, eContentType.PDF, attachment.getBytes(), attachment.getName());
             return true;
         }
         return false;
@@ -69,18 +66,19 @@ public class EmailRecognitionImpl implements IEmailRecognition{
     private void recognizeByBody(EmailMessage emailMessage) {
         String content = emailMessage.getContent();
         if (bodyRecognition.recognize(content)) {
-            saveReceipt(emailMessage, eContentType.STRING, content.getBytes(StandardCharsets.UTF_8));
+            saveReceipt(emailMessage, eContentType.STRING, content.getBytes(StandardCharsets.UTF_8), null);
         }
     }
 
-    private void saveReceipt(EmailMessage emailMessage, eContentType eType, byte[] bytes) {
-        AttachmentReceipt receipt = new AttachmentReceipt(hostName, emailMessage.getFrom(), eType, bytes, emailMessage.getDate(),bodyRecognition.getCurrency(), bodyRecognition.getTotalPrice());
-        try {
-            //TODO: send my email to insert Receipt
-            dbHandler.insertReceipt("ior46800@gmail.com",receipt);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
+    private void saveReceipt(EmailMessage emailMessage, eContentType eType, byte[] bytes, String fileName) {
+//        Receipt receipt = new Receipt(hostName, emailMessage.getFrom(), eType, bytes, emailMessage.getDate(),
+//                bodyRecognition.getCurrency(), bodyRecognition.getTotalPrice(), fileName, bodyRecognition.getOrderNumber());
+//        try {
+//            //TODO: send my email to insert Receipt
+//            dbHandler.insertReceipt("ior46800@gmail.com",receipt);
+//        } catch (Throwable throwable) {
+//            throwable.printStackTrace();
+//        }
     }
 
 

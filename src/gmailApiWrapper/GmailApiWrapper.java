@@ -184,8 +184,8 @@ public class GmailApiWrapper implements IEmailApiWrapper {
 
 
         ListMessagesResponse response = service.users().messages().list(userId)
-                .execute();
-
+                .setQ("newer_than:10d").execute();
+//                .execute();
         List<Message> messages = new ArrayList<>();
         List<Message> fullMessages = new ArrayList<>();
         while (response.getMessages() != null) {
@@ -193,7 +193,8 @@ public class GmailApiWrapper implements IEmailApiWrapper {
             if (response.getNextPageToken() != null) {
                 String pageToken = response.getNextPageToken();
                 response = service.users().messages().list(userId)
-                        .execute();
+                        .setQ("newer_than:1d").execute();
+//                        .execute();
             } else {
                 break;
             }
@@ -362,13 +363,17 @@ public class GmailApiWrapper implements IEmailApiWrapper {
             SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss"
                     , Locale.US);
             Date date = formatter.parse(dateStr);
+            if (date.before(startingTime))
+                break;
 //            if (date.before(startingTime))
 //                break;
 
             String subject = headers.stream().filter(h -> h.getName().equals("Subject")).collect(Collectors.toList()).get(0).getValue();
             String from = headers.stream().filter(h -> h.getName().equals("From")).collect(Collectors.toList()).get(0).getValue();
             from = from.substring(from.indexOf('<') + 1, from.lastIndexOf('>'));
+            String to = headers.stream().filter(h -> h.getName().equals("To")).collect(Collectors.toList()).get(0).getValue();
 
+            gmailMessage.setTo(to);
             gmailMessage.setSubject(subject);
             gmailMessage.setDate(date);
             gmailMessage.setFrom(from);

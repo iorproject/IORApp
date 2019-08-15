@@ -17,7 +17,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 public class Demo {
 
 
-	public static void main(String[] args) throws FirebaseException, JsonParseException, JsonMappingException, IOException, JacksonUtilityException, InterruptedException {
+	public static void main(String[] args) throws FirebaseException, JsonParseException, JsonMappingException, IOException, JacksonUtilityException {
 
 		
 		// get the base-url (ie: 'http://gamma.firebase.com/username')
@@ -26,27 +26,12 @@ public class Demo {
 		final String firebase_apiKey = "AAAAFx7lSQ8:APA91bHgHuEV0G6OMtAzLdPdS0rHlE3EizFM_DuVQXvfgscTM-gbVeuIcLK3gZcLGIis2B1YkePVO0qC4rBwLGHsyEt57B5lKh6bSEg6-UiCN8yAekCZeZjTBQhjDnLZvvmXrpYRYzd2";
 
         byte[] bytes = "Paypal".getBytes();
-
-/*
-        Receipt r = new Receipt("Paypal","ior46800@gmail.com",eContentType.STRING,bytes,new Date(),"US",300);
-        Thread.sleep(50);
-        Receipt f = new Receipt("Ebay","ior46800@gmail.com",eContentType.STRING,bytes,new Date(),"US",300);
-        Thread.sleep(50);
-        Receipt q = new Receipt("Amazon","ior46800@gmail.com",eContentType.STRING,bytes,new Date(),"US",300);
-*/
-
+        //Receipt r = new Receipt("Paypal","ior46800@gmail.com",eContentType.STRING,bytes,new Date(),"US",300);
         //User user = new User("omer@gmail.com","111","1111",new Date());
         FirebaseDao firebaseDao = FirebaseDao.getInstance();
         try{
-/*
-            firebaseDao.insertReceipt("ior46800@gmail.com",r);
-            firebaseDao.insertReceipt("ior46800@gmail.com",f);
-            firebaseDao.insertReceipt("ior46800@gmail.com",q);
-*/
-
-            List<Receipt> d = firebaseDao.getCompanyReceiptsByUser("ior46800@gmail.com","Paypal");
+            OrderNumberApproveIndicator d = firebaseDao.getOrderNumberApproval();
             System.out.println(d);
-
         }
         catch (Throwable e){
 

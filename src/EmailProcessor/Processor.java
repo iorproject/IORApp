@@ -8,10 +8,7 @@ import gmailApiWrapper.EmailMessage;
 import gmailApiWrapper.IEmailApiWrapper;
 import gmailApiWrapper.eEmailApi;
 import main.java.DB.DBHandler;
-import main.java.DB.Entities.Receipt;
-import main.java.DB.Entities.TotalIndicator;
-import main.java.DB.Entities.User;
-import main.java.DB.Entities.eContentType;
+import main.java.DB.Entities.*;
 import main.java.DB.ReceiptsDAO;
 import main.java.DB.error.FirebaseException;
 
@@ -27,12 +24,13 @@ import java.util.concurrent.TimeUnit;
 public class Processor {
     private ApproveIndicator approveIndicators;
     private TotalIndicator totalIndicators;
+    private OrderNumberApproveIndicator orderNumberApproveIndicator;
     private ReceiptsDAO dbHandler;
 
     public void Run(){
         init();
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.scheduleAtFixedRate(this::runAllUsers, 0, 1, TimeUnit.MINUTES);
+        service.scheduleAtFixedRate(this::runAllUsers, 0, 20, TimeUnit.MINUTES);
     }
 
     private void init() {
@@ -40,15 +38,18 @@ public class Processor {
         try {
             approveIndicators = dbHandler.getApprovalIndicators();
             totalIndicators = dbHandler.getTotalIndicator();
+            orderNumberApproveIndicator = dbHandler.getOrderNumberApproval();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
     }
 
     private void runAllUsers(){
-        System.out.println("*******runAllUsers***********");
         try {
-            dbHandler.getAllUsers().forEach(this::runUser);
+            dbHandler.getAllUsers().forEach(user -> {
+                if (user.getEmail().startsWith("ior"))
+                    runUser(user);
+            });
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -67,10 +68,14 @@ public class Processor {
 
     private void checkUserMails(User user) throws Throwable {
         Date now = new Date();
-        IEmailRecognition emailRecognition = EmailRecognitionBuilder.Build(approveIndicators, totalIndicators);
+        IEmailRecognition emailRecognition = EmailRecognitionBuilder.Build(
+                approveIndicators,
+                totalIndicators,
+                orderNumberApproveIndicator);
         List<EmailMessage> messages = setEmailMessages(user);
         for(EmailMessage emailMessage : messages){
-            emailRecognition.Recognize(emailMessage);
+            if(emailMessage.getSubject().contains("תודה לך על הזמנתך"))
+                emailRecognition.Recognize(emailMessage);
         }
         setLastServed(messages, user, now);
     }

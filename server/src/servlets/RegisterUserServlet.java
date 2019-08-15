@@ -31,6 +31,7 @@ public class RegisterUserServlet extends HttpServlet {
         String email = request.getParameter("email");
         String accessToken = request.getParameter(Constants.ACCESS_TOKEN);
         String refreshToken = request.getParameter(Constants.REFRESH_TOKEN);
+        String name = request.getParameter(Constants.USER_NAME);
         String registerDate = request.getParameter(Constants.REGISTER_DATE);
 
         DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
@@ -41,7 +42,7 @@ public class RegisterUserServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        IorEngine.registerUser(new User(email, accessToken, refreshToken, date));
+        IorEngine.registerUser(new User(email, name, accessToken, refreshToken, date));
 
     }
 

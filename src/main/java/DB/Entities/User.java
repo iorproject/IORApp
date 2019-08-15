@@ -5,12 +5,14 @@ import java.util.Date;
 
 public class User implements Serializable {
     private String email;
+    private String name;
     private String accessToken;
     private String refreshToken;
     private Date registerDate;
 
-    public User(String email, String accessToken, String refreshToken, Date registerDate) {
+    public User(String email, String name, String accessToken, String refreshToken, Date registerDate) {
         this.email = email;
+        this.name = name;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.registerDate = registerDate;
@@ -47,4 +49,6 @@ public class User implements Serializable {
     public Date getRegisterDate() {
         return registerDate;
     }
+
+    public String getName() { return name; }
 }

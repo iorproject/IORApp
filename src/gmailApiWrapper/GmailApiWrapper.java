@@ -184,7 +184,7 @@ public class GmailApiWrapper implements IEmailApiWrapper {
 
 
         ListMessagesResponse response = service.users().messages().list(userId)
-                .setQ("newer_than:1d").execute();
+                .setQ("newer_than:10d").execute();
 
         List<Message> messages = new ArrayList<>();
         List<Message> fullMessages = new ArrayList<>();

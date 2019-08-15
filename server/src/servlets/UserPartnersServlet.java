@@ -22,15 +22,20 @@ public class UserPartnersServlet extends HttpServlet {
             throws ServletException, IOException {
 
         response.setContentType("application/json");
-
         String email = request.getParameter("email");
-        List<String> partners = IorEngine.getUserPartners(email);
 
-        String resp = new Gson().toJson(partners);
-        try (PrintWriter out = response.getWriter()) {
-            out.println(resp);
-            out.flush();
+        try {
+            List<User> partners = IorEngine.getUserPartners(email);
+            String resp = new Gson().toJson(partners);
+            try (PrintWriter out = response.getWriter()) {
+                out.println(resp);
+                out.flush();
+            }
         }
+        catch (Throwable t) {
+            response.setStatus(500);
+        }
+
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

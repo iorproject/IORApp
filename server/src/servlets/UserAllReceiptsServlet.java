@@ -2,10 +2,9 @@ package servlets;
 
 import com.google.gson.Gson;
 import engine.IorEngine;
-import main.java.DB.Entities.User;
-import servletsUtils.Constants;
+import main.java.DB.Entities.CompanyLogo;
+import main.java.DB.Entities.Receipt;
 
-import javax.jws.soap.SOAPBinding;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,28 +12,30 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 
-@WebServlet(name = "UserInfoServlet", urlPatterns = {"/userInfo"})
+@WebServlet(name = "UserAllReceiptsServlet", urlPatterns = {"/userAllReceipts"})
 
-public class UserInfoServlet extends HttpServlet {
+public class UserAllReceiptsServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         response.setContentType("application/json");
-
         String email = request.getParameter("email");
-        User user = IorEngine.getUserInfo(email);
-        User responseUser = new User(email, user.getName(), null, null, user.getRegisterDate());
 
-        String resp = new Gson().toJson(responseUser);
-        try (PrintWriter out = response.getWriter()) {
-            out.println(resp);
-            out.flush();
+        try {
+
+            List<Receipt> receipts = IorEngine.getAllUserRecepits(email);
+            String resp = new Gson().toJson(receipts);
+            try (PrintWriter out = response.getWriter()) {
+                out.println(resp);
+                out.flush();
+            }
+        }
+        catch (Throwable t) {
+            response.setStatus(500);
+
         }
     }
 
@@ -47,7 +48,6 @@ public class UserInfoServlet extends HttpServlet {
 
         processRequest(request, response);
     }
-
 
 
 }

@@ -64,29 +64,24 @@ public class IorEngine {
         catch (Throwable t) {
 
 
-        }
+    }
 
         return receipts;
     }
 
-    public static List<String> getUserPartners(String email) {
+    public static List<User> getUserPartners(String email) throws Throwable {
 
-        List<User> partners = null;
-        List<String> res = null;
+        List<User> partnersDB = null;
 
-        try {
-            partners = DBHandler.getInstance().getAllAccessPermissionFriendshipsByUser(email);
-            if (partners != null) {
-                res = new ArrayList<>();
-                for(User user : partners) {
-                    res.add(user.getEmail());
-                }
-            }
-        }
-        catch (Throwable e) {
+
+        partnersDB = DBHandler.getInstance().getAllAccessPermissionFriendshipsByUser(email);
+        for (User user : partnersDB) {
+
+            user.setAccessToken(null);
+            user.setRefreshToken(null);
         }
 
-        return res;
+        return partnersDB;
     }
 
     public static void sendUserShareRequest(String receiverEmail, String requesterEmail) throws Throwable {
@@ -124,4 +119,22 @@ public class IorEngine {
 
         return requestsEmails;
     }
+
+    public static List<Receipt> getAllUserRecepits(String email) throws Throwable  {
+
+        List<Receipt> receipts = DBHandler.getInstance().getUserReceipts(email);
+        return receipts;
+    }
+
+
+    public static int getAmountPartners(String email) throws Throwable {
+
+        return DBHandler.getInstance().getAmountOfAccessFriendships(email);
+    }
+
+    public static int getAmountFollowingMyReceipts(String email) throws Throwable {
+
+        return DBHandler.getInstance().getAmountOfViewingFriendships(email);
+    }
+
 }

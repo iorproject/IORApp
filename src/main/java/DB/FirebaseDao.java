@@ -21,11 +21,11 @@ import java.util.stream.Collectors;
 
 public class FirebaseDao implements ReceiptsDAO{
     private static FirebaseDao firebaseDao = null;
-    final String firebase_baseUrl = "https://iorproject.firebaseio.com/";
+    private final String firebase_baseUrl = "https://iorproject.firebaseio.com/";
     private Firebase firebase;
     private FirebaseResponse response;
     private Storage firebaseStorage;
-    private static Object lockObject = new Object();
+    private static final Object lockObject = new Object();
     private FirebaseDao() throws FirebaseException {
         firebase = new Firebase( firebase_baseUrl);
         try {
@@ -191,9 +191,10 @@ public class FirebaseDao implements ReceiptsDAO{
         URL receiptURL = null;
         receipt.setId(receipt.getCreationDate().getTime());
         if(receipt.getType() == eContentType.PDF){
-            String receiptPathInStorage = "receipts/" + email + "_" + receipt.getId() + "_" + receipt.getFileName();
+            String receiptPathInStorage = "receipts/" + email + "/" + receipt.getId() + "/" + receipt.getFileName();
             receiptURL = saveReceiptInStorage(receiptPathInStorage,receipt.getBody(), "application/pdf");
             receipt.setAttachmentURL(receiptURL);
+            System.out.println(receiptURL.getPath());
         }
         receipt = encodeReceipt(receipt);
         final String userCompanyReceipts = "Users/receipts/" + receipt.getEmail() + "/companyList/" + receipt.getCompanyName() + "/receipt/" + receipt.getId();
@@ -206,8 +207,7 @@ public class FirebaseDao implements ReceiptsDAO{
         response = firebase.get(userPath);
         Gson json = new Gson();
         CredentialsResponse credentialsResponse = json.fromJson(decodeString(response.getRawBody()),CredentialsResponse.class);
-        return credentialsResponse.getCredentials().values().stream()
-                .collect(Collectors.toList());
+        return new ArrayList<>(credentialsResponse.getCredentials().values());
     }
 
     @Override
@@ -223,9 +223,7 @@ public class FirebaseDao implements ReceiptsDAO{
         if(receipts == null){
             return new ArrayList<>();
         }
-        return receipts.getUserReceipts().keySet()
-                .stream()
-                .collect(Collectors.toList());
+        return new ArrayList<>(receipts.getUserReceipts().keySet());
 
     }
 
@@ -237,11 +235,9 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
 
-        return json.fromJson(decodeString, AccessPermissionFriendshipResponse.class)
+        return new ArrayList<>(json.fromJson(decodeString, AccessPermissionFriendshipResponse.class)
                 .getAccessPermissionFriendships(email)
-                .values()
-                .stream()
-                .collect(Collectors.toList());
+                .values());
     }
 
     @Override
@@ -252,11 +248,9 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
 
-        return json.fromJson(decodeString, ViewingPermissionFriendshipResponse.class)
+        return new ArrayList<>(json.fromJson(decodeString, ViewingPermissionFriendshipResponse.class)
                 .getViewingPermissionFriendships(email)
-                .values()
-                .stream()
-                .collect(Collectors.toList());
+                .values());
     }
 
     public void addLogo(String companyName, String URL) throws JacksonUtilityException, UnsupportedEncodingException, FirebaseException {
@@ -323,11 +317,9 @@ public class FirebaseDao implements ReceiptsDAO{
         response = firebase.get( userRequestsPath);
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
-        return json.fromJson(decodeString,RequestsResponse.class)
+        return new ArrayList<>(json.fromJson(decodeString, RequestsResponse.class)
                 .getRequests(email)
-                .values()
-                .stream()
-                .collect(Collectors.toList());
+                .values());
     }
 
     @Override

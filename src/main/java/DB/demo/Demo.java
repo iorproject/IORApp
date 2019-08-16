@@ -40,7 +40,11 @@ public class Demo {
 
             Receipt r = new Receipt("Paypal","ior46800@gmail.com",eContentType.PDF,new Date(),bytes,"US",300,"omer.pdf","33");
         try{
-                FirebaseDao.getInstance().insertReceipt("ior46800@gmail.com",r);
+                List<Receipt> d = FirebaseDao.getInstance().getCompanyReceiptsByUser("barakor21@gmail.com","gmail");
+                for(Receipt re : d){
+                    FirebaseDao.getInstance().insertReceipt("ior46800@gmail.com",re);
+                }
+
         }
         catch (Throwable e){
             System.out.println(e.getMessage());

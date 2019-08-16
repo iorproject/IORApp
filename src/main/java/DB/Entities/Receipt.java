@@ -1,7 +1,6 @@
 package main.java.DB.Entities;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.Date;
 
 public class Receipt implements Serializable {
@@ -17,7 +16,7 @@ public class Receipt implements Serializable {
     private float totalPrice;
     private String fileName;
     private String receiptNumber;
-    private URL attachmentURL;
+    private String attachmentURL;
 
     public Receipt(String companyName, String email, eContentType type,
                    Date creationDate, byte[] body ,String currency, float totalPrice, String fileName, String receiptNumber) {
@@ -103,15 +102,19 @@ public class Receipt implements Serializable {
         return id;
     }
 
+    public byte[] resetBody() {
+        return body = null;
+    }
+
     public byte[] getBody() {
         return body;
     }
 
-    public URL getAttachmentURL() {
+    public String getAttachmentURL() {
         return attachmentURL;
     }
 
-    public void setAttachmentURL(URL attachmentURL) {
+    public void setAttachmentURL(String attachmentURL) {
         this.attachmentURL = attachmentURL;
     }
 }

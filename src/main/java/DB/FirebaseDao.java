@@ -188,16 +188,18 @@ public class FirebaseDao implements ReceiptsDAO{
 
     @Override
     public void insertReceipt(String email, Receipt receipt) throws Throwable {
-        URL receiptURL = null;
+        String receiptURL = null;
         receipt.setId(receipt.getCreationDate().getTime());
         if(receipt.getType() == eContentType.PDF){
             String receiptPathInStorage = "receipts/" + email + "/" + receipt.getId() + "/" + receipt.getFileName();
-            receiptURL = saveReceiptInStorage(receiptPathInStorage,receipt.getBody(), "application/pdf");
+            receiptURL = saveReceiptInStorage(receiptPathInStorage,receipt.getBody(), "application/pdf").toString();
+            receiptURL = encodeString(receiptURL);
             receipt.setAttachmentURL(receiptURL);
-            System.out.println(receiptURL.getPath());
         }
+        email = encodeString(email);
+        receipt.resetBody();
         receipt = encodeReceipt(receipt);
-        final String userCompanyReceipts = "Users/receipts/" + receipt.getEmail() + "/companyList/" + receipt.getCompanyName() + "/receipt/" + receipt.getId();
+        final String userCompanyReceipts = "Users/receipts/" + email + "/companyList/" + receipt.getCompanyName() + "/receipt/" + receipt.getId();
         response = firebase.put(userCompanyReceipts,new Gson().toJson(receipt));
     }
 

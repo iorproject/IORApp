@@ -13,11 +13,11 @@ public interface ReceiptsDAO {
     List<Receipt> getUserReceipts(String email) throws Throwable;
     int getAmountOfUserReceipts(String email) throws  Throwable;
     List<Receipt> getCompanyReceiptsByUser(String email, final String company) throws Throwable;
-    AttachmentReceipt getCompanyReceiptByUser(String email, final String company, long id) throws Throwable;
+    Receipt getCompanyReceiptByUser(String email, final String company, long id) throws Throwable;
     int getAmountOfCompanyReceiptsByUser(String email, String company) throws Throwable;
     void setLastSearchMailTime(String email, Date lastUpdatedSearchTime) throws Throwable;
     Date getLastSearchMailTime(String email) throws Throwable;
-    void insertReceipt(String email, AttachmentReceipt receipt) throws Throwable;
+    void insertReceipt(String email, Receipt receipt) throws Throwable;
     List<User> getAllUsers() throws Throwable;
     void registerUser(User user) throws Throwable;
     List<String> getCompaniesNames(String email) throws Throwable;

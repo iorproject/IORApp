@@ -33,6 +33,4 @@ public interface ReceiptsDAO {
     int getAmountOfAccessFriendships(String email) throws Throwable;
     int getAmountOfViewingFriendships(String email) throws Throwable;
     void saveUserDisplayPicture(String email, String encodeBitmap) throws Throwable;
-    String fetchUserDisplayPicture(String email) throws Throwable;
-
 }

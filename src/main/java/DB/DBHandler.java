@@ -154,9 +154,4 @@ public class DBHandler implements ReceiptsDAO{
     public void saveUserDisplayPicture(String email, String encodeBitmap) throws Throwable {
         FirebaseDao.getInstance().saveUserDisplayPicture(email,encodeBitmap);
     }
-
-    @Override
-    public String fetchUserDisplayPicture(String email) throws Throwable {
-        return FirebaseDao.getInstance().fetchUserDisplayPicture(email);
-    }
 }

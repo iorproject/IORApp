@@ -30,8 +30,12 @@ public class Demo {
         //User user = new User("omer@gmail.com","111","1111",new Date());
         FirebaseDao firebaseDao = FirebaseDao.getInstance();
         try{
-            OrderNumberApproveIndicator d = firebaseDao.getOrderNumberApproval();
-            System.out.println(d);
+/*
+            firebaseDao.saveUserDisplayPicture("ior46800@gmail.com","omer");
+*/
+            firebaseDao.acceptFriendshipRequest("ior46800@gmail.com","omer@gmail.com");
+//            OrderNumberApproveIndicator d = firebaseDao.getOrderNumberApproval();
+//            System.out.println(d);
         }
         catch (Throwable e){
 

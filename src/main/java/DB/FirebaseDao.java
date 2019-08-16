@@ -154,7 +154,7 @@ public class FirebaseDao implements ReceiptsDAO{
         user.setAccessToken(encodeString(user.getAccessToken()));
         user.setRefreshToken(encodeString(user.getRefreshToken()));
         user.setEmail(encodeString(user.getEmail()));
-        return  user;
+        return user;
     }
 
     private User decodeUser(User user){
@@ -187,9 +187,6 @@ public class FirebaseDao implements ReceiptsDAO{
         user = encodeUser(user);
         final String userCredentialsPath = "Users/credentials/" + user.getEmail();
         response = firebase.patch(userCredentialsPath,new Gson().toJson(user));
-        System.out.println( "\n\nResult of GET (for the test-PUT):\n" + response );
-        System.out.println("\n");
-        getAllUsers();
     }
 
     @Override
@@ -244,28 +241,28 @@ public class FirebaseDao implements ReceiptsDAO{
 
     @Override
     public void sendFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable {
+        User requesterUser = getCredentialUser(requesterEmail);
         requesterEmail = encodeString(requesterEmail);
         receiverEmail = encodeString(receiverEmail);
         final String userRequestsPath = "Users/requests/" + receiverEmail;
         Map<String,User> newRequestMap = new HashMap<>();
-        User requesterUser = new User(requesterEmail);
         newRequestMap.put(requesterEmail,requesterUser);
         response = firebase.patch(userRequestsPath,new Gson().toJson(newRequestMap));
     }
 
     @Override
     public void acceptFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable {
+        User receiverUser = getCredentialUser(receiverEmail);
+        User requesterUser = getCredentialUser(requesterEmail);
         requesterEmail = encodeString(requesterEmail);
         receiverEmail = encodeString(receiverEmail);
         removeFriendShipRequest(receiverEmail,requesterEmail);
         final String userFriendShipAccessPermissionPath = "Users/friendships/" + requesterEmail + "/accessPermission";
         Map<String,User> newFriendShipMap = new HashMap<>();
-        User receiverUser = new User(receiverEmail);
         newFriendShipMap.put(receiverEmail,receiverUser);
         response = firebase.patch(userFriendShipAccessPermissionPath ,new Gson().toJson(newFriendShipMap));
         final String userFriendShipViewingPath = "Users/friendships/" + receiverEmail + "/viewingPermission";
         newFriendShipMap.clear();
-        User requesterUser = new User(requesterEmail);
         newFriendShipMap.put(requesterEmail,requesterUser);
         response = firebase.patch(userFriendShipViewingPath ,new Gson().toJson(newFriendShipMap));
     }
@@ -350,20 +347,9 @@ public class FirebaseDao implements ReceiptsDAO{
 
     @Override
     public void saveUserDisplayPicture(String email, String encodeBitmap) throws Throwable {
-        email = encodeString(email);
+        User user = getCredentialUser(email);
         encodeBitmap = encodeString(encodeBitmap);
-        final String userProfilePhotoPath = "Users/pictures/" + email + "/picture";
-        response = firebase.put(userProfilePhotoPath,new Gson().toJson(encodeBitmap));
-    }
-
-    @Override
-    public String fetchUserDisplayPicture(String email) throws Throwable {
-        email = encodeString(email);
-        final String userProfilePhotoPath = "Users/pictures/" + email;
-        response = firebase.get(userProfilePhotoPath);
-        Gson json = new Gson();
-        String decodeString = decodeString(response.getRawBody());
-        ProfilePicture profilePicture = json.fromJson(decodeString,ProfilePicture.class);
-        return profilePicture.getPicture();
+        user.setProfileImage(encodeBitmap);
+        registerUser(user);
     }
 }

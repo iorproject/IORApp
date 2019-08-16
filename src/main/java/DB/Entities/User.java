@@ -9,6 +9,7 @@ public class User implements Serializable {
     private String accessToken;
     private String refreshToken;
     private Date registerDate;
+    private String profileImage;
 
     public User(String email, String name, String accessToken, String refreshToken, Date registerDate) {
         this.email = email;
@@ -51,4 +52,12 @@ public class User implements Serializable {
     }
 
     public String getName() { return name; }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
 }

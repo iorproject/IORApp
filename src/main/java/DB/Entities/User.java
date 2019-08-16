@@ -19,8 +19,11 @@ public class User implements Serializable {
         this.registerDate = registerDate;
     }
 
-    public User(String email){
+    public User(String email, String name, Date registerDate, String profileImage) {
         this.email = email;
+        this.name = name;
+        this.registerDate = registerDate;
+        this.profileImage = profileImage;
     }
 
     public void setEmail(String email){
@@ -60,4 +63,6 @@ public class User implements Serializable {
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
+
+
 }

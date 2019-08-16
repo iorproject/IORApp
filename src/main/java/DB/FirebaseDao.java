@@ -1,5 +1,8 @@
 package main.java.DB;
 
+import com.google.auth.Credentials;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.storage.*;
 import com.google.gson.Gson;
 import dbObjects.ApproveIndicator;
 import main.java.DB.Entities.*;
@@ -8,8 +11,12 @@ import main.java.DB.error.JacksonUtilityException;
 import main.java.DB.model.FirebaseResponse;
 import main.java.DB.service.Firebase;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class FirebaseDao implements ReceiptsDAO{
@@ -17,10 +24,18 @@ public class FirebaseDao implements ReceiptsDAO{
     final String firebase_baseUrl = "https://iorproject.firebaseio.com/";
     private Firebase firebase;
     private FirebaseResponse response;
+    private Storage firebaseStorage;
     private static Object lockObject = new Object();
-
     private FirebaseDao() throws FirebaseException {
         firebase = new Firebase( firebase_baseUrl);
+        try {
+            Credentials credentials = GoogleCredentials
+                    .fromStream(new FileInputStream("./IORProject-645649d1f7f3.json"));
+            firebaseStorage = StorageOptions.newBuilder().setCredentials(credentials)
+                    .setProjectId("iorproject").build().getService();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public static FirebaseDao getInstance() throws FirebaseException {
         if(firebaseDao == null){
@@ -31,6 +46,13 @@ public class FirebaseDao implements ReceiptsDAO{
             }
         }
         return firebaseDao;
+    }
+
+    private URL saveReceiptInStorage(String receiptName, byte[] receiptBody, String contextType){
+        BlobId blobId = BlobId.of("iorproject.appspot.com", receiptName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contextType).build();
+        Blob blob = firebaseStorage.create(blobInfo, receiptBody);
+        return blob.signUrl(100,TimeUnit.DAYS);
     }
 
     private String encodeString(String insertedData){
@@ -113,7 +135,7 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     @Override
-    public AttachmentReceipt getCompanyReceiptByUser(String email, String company, long id) throws Throwable {
+    public Receipt getCompanyReceiptByUser(String email, String company, long id) throws Throwable {
         final String userCompanyReceipts = "Users/receipts/" + email + "/companyList/" + company;
         response = firebase.get(userCompanyReceipts);
         Gson json = new Gson();
@@ -138,7 +160,7 @@ public class FirebaseDao implements ReceiptsDAO{
         return json.fromJson(response.getRawBody(),Date.class);
     }
 
-    private AttachmentReceipt encodeReceipt(AttachmentReceipt receipt){
+    private Receipt encodeReceipt(Receipt receipt){
         receipt.setCompanyName(encodeString(receipt.getCompanyName()));
         receipt.setEmail(encodeString(receipt.getEmail()));
         return  receipt;
@@ -165,8 +187,14 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     @Override
-    public void insertReceipt(String email, AttachmentReceipt receipt) throws Throwable {
+    public void insertReceipt(String email, Receipt receipt) throws Throwable {
+        URL receiptURL = null;
         receipt.setId(receipt.getCreationDate().getTime());
+        if(receipt.getType() == eContentType.PDF){
+            String receiptPathInStorage = "receipts/" + email + "_" + receipt.getId() + "_" + receipt.getFileName();
+            receiptURL = saveReceiptInStorage(receiptPathInStorage,receipt.getBody(), "application/pdf");
+            receipt.setAttachmentURL(receiptURL);
+        }
         receipt = encodeReceipt(receipt);
         final String userCompanyReceipts = "Users/receipts/" + receipt.getEmail() + "/companyList/" + receipt.getCompanyName() + "/receipt/" + receipt.getId();
         response = firebase.put(userCompanyReceipts,new Gson().toJson(receipt));

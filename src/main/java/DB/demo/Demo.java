@@ -1,8 +1,13 @@
 package main.java.DB.demo;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
+import com.google.auth.Credentials;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.storage.*;
 import dbObjects.ApproveIndicator;
 import main.java.DB.Entities.*;
 import main.java.DB.FirebaseDao;
@@ -11,8 +16,11 @@ import main.java.DB.error.JacksonUtilityException;
 import main.java.DB.model.FirebaseResponse;
 import main.java.DB.service.Firebase;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Demo {
 
@@ -24,16 +32,55 @@ public class Demo {
 
 		// get the api-key (ie: 'tR7u9Sqt39qQauLzXmRycXag18Z2')
 		final String firebase_apiKey = "AAAAFx7lSQ8:APA91bHgHuEV0G6OMtAzLdPdS0rHlE3EizFM_DuVQXvfgscTM-gbVeuIcLK3gZcLGIis2B1YkePVO0qC4rBwLGHsyEt57B5lKh6bSEg6-UiCN8yAekCZeZjTBQhjDnLZvvmXrpYRYzd2";
+		final String storagePath = "gs://iorproject.appspot.com";
+        InputStream file = new FileInputStream("C:\\Users\\user\\Documents\\Zara.pdf");
 
-        byte[] bytes = "Paypal".getBytes();
-        //Receipt r = new Receipt("Paypal","ior46800@gmail.com",eContentType.STRING,bytes,new Date(),"US",300);
+
+		byte[] bytes =  IOUtils.toByteArray(file);
+
+            Receipt r = new Receipt("Paypal","ior46800@gmail.com",eContentType.PDF,new Date(),bytes,"US",300,"omer.pdf","33");
+        try{
+                FirebaseDao.getInstance().insertReceipt("ior46800@gmail.com",r);
+        }
+        catch (Throwable e){
+            System.out.println(e.getMessage());
+        }
+        //byte[] bytes = "Paypal".getBytes();
+
         //User user = new User("omer@gmail.com","111","1111",new Date());
-        FirebaseDao firebaseDao = FirebaseDao.getInstance();
+//        FirebaseDao firebaseDao = FirebaseDao.getInstance();
+
+
+        /*Bucket bucket = storage.create(BucketInfo.of("baeldung-bucket"));
+        System.out.printf("Bucket %s created.%n", bucket.getName());
+*/
+        /*Storage storage = StorageOptions.newBuilder()
+                .setProjectId(STORAGE_BUCKET)
+                // Optionally Add credentials
+                setCredentials(credentials)
+                .build()
+                .getService();
+*/
+        Credentials credentials = GoogleCredentials
+                .fromStream(new FileInputStream("./IORProject-645649d1f7f3.json"));
+
+
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials)
+                .setProjectId("iorproject").build().getService();
+
+        // Optional third parameter to limit fields returned, just getting size for my use case
+/*
+        Blob blob = storage.get("iorproject.appspot.com", "paypalButton.png", Storage.BlobGetOption.fields(Storage.BlobField.SIZE));
+        if (blob != null) {
+            blob.getSize();
+        }
+*/
+
         try{
 /*
             firebaseDao.saveUserDisplayPicture("ior46800@gmail.com","omer");
 */
-            firebaseDao.acceptFriendshipRequest("ior46800@gmail.com","omer@gmail.com");
+//            firebaseDao.acceptFriendshipRequest("ior46800@gmail.com","omer@gmail.com");
 //            OrderNumberApproveIndicator d = firebaseDao.getOrderNumberApproval();
 //            System.out.println(d);
         }
@@ -152,9 +199,9 @@ public class Demo {
             System.out.println(c);
 */
             //firebaseDao.sendFriendshipRequest("ior46800@gmail.com","omer@gmail.com");
-            firebaseDao.acceptFriendshipRequest("omer@gmail.com","ior46800@gmail.com");
+            /*firebaseDao.acceptFriendshipRequest("omer@gmail.com","ior46800@gmail.com");
             firebaseDao.acceptFriendshipRequest("omerblechman@gmail.com","ior46800@gmail.com");
-            firebaseDao.acceptFriendshipRequest("ior46800@gmail.com","omerblechman@gmail.com");
+            firebaseDao.acceptFriendshipRequest("ior46800@gmail.com","omerblechman@gmail.com");*/
 //
            // List<User> f =firebaseDao.getAllViewingPermissionFriendshipsByUser("ior46800@gmail.com");
 //            List<User> f =firebaseDao.getAllRequestsByUser("ior46800@gmail.com");

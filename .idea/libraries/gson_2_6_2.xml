@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="gson-2.6.2">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/out/artifacts/server_war_exploded/WEB-INF/lib/gson-2.6.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/server/web/WEB-INF/lib/gson-2.6.2.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

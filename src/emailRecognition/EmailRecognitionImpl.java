@@ -71,14 +71,14 @@ public class EmailRecognitionImpl implements IEmailRecognition{
     }
 
     private void saveReceipt(EmailMessage emailMessage, eContentType eType, byte[] bytes, String fileName) {
-//        Receipt receipt = new Receipt(hostName, emailMessage.getFrom(), eType, bytes, emailMessage.getDate(),
-//                bodyRecognition.getCurrency(), bodyRecognition.getTotalPrice(), fileName, bodyRecognition.getOrderNumber());
-//        try {
-//            //TODO: send my email to insert Receipt
-//            dbHandler.insertReceipt("ior46800@gmail.com",receipt);
-//        } catch (Throwable throwable) {
-//            throwable.printStackTrace();
-//        }
+        Receipt receipt = new Receipt(hostName, emailMessage.getFrom(), eType, emailMessage.getDate(), bytes,
+                bodyRecognition.getCurrency(), bodyRecognition.getTotalPrice(), fileName, bodyRecognition.getOrderNumber());
+        try {
+            //TODO: send my email to insert Receipt
+            dbHandler.insertReceipt("ior46800@gmail.com",receipt);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
 

@@ -137,4 +137,9 @@ public class IorEngine {
         return DBHandler.getInstance().getAmountOfViewingFriendships(email);
     }
 
+    public static void setUserProfileImage(String email, String profileImage) throws Throwable
+    {
+        DBHandler.getInstance().saveUserDisplayPicture(email, profileImage);
+    }
+
 }

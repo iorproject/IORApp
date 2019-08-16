@@ -29,7 +29,8 @@ public class UserInfoServlet extends HttpServlet {
 
         String email = request.getParameter("email");
         User user = IorEngine.getUserInfo(email);
-        User responseUser = new User(email, user.getName(), null, null, user.getRegisterDate());
+      //  String profileInage = user.ge
+        User responseUser = new User(email, user.getName(), user.getRegisterDate(), user.getProfileImage());
 
         String resp = new Gson().toJson(responseUser);
         try (PrintWriter out = response.getWriter()) {

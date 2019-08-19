@@ -102,8 +102,8 @@ public class Receipt implements Serializable {
         return id;
     }
 
-    public byte[] resetBody() {
-        return body = null;
+    public void resetBody() {
+        body = null;
     }
 
     public byte[] getBody() {

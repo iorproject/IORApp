@@ -115,7 +115,7 @@ public class FirebaseDao implements ReceiptsDAO{
         if(receipts == null){
             return new ArrayList<>();
         }
-        if(receipts.getUserReceipts().isEmpty()){
+        if(receipts.getUserReceipts() == null){
             return null;
         }
         receipts.getUserReceipts().values()
@@ -241,7 +241,7 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
         AccessPermissionFriendshipResponse accessPermissionFriendshipResponse = json.fromJson(decodeString,AccessPermissionFriendshipResponse.class);
-        if(accessPermissionFriendshipResponse.getAccessPermissionFriendships(email).isEmpty()){
+        if(accessPermissionFriendshipResponse.getAccessPermissionFriendships(email) == null){
             return null;
         }
         List<User> accessingFriendsList = new ArrayList<>(accessPermissionFriendshipResponse
@@ -275,7 +275,7 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
         ViewingPermissionFriendshipResponse viewingPermissionFriendshipResponse = json.fromJson(decodeString,ViewingPermissionFriendshipResponse.class);
-        if(viewingPermissionFriendshipResponse.getViewingPermissionFriendships(email).isEmpty()){
+        if(viewingPermissionFriendshipResponse.getViewingPermissionFriendships(email) == null){
             return null;
         }
         List<User> viewingFriendList = new ArrayList<>(viewingPermissionFriendshipResponse
@@ -360,7 +360,7 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
         RequestsResponse requestsResponse = json.fromJson(decodeString,RequestsResponse.class);
-        if(requestsResponse.getRequests(email).isEmpty()){
+        if(requestsResponse.getRequests(email) == null){
             return null;
         }
         List<User> friendRequests =  new ArrayList<>(requestsResponse

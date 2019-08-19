@@ -251,7 +251,9 @@ public class FirebaseDao implements ReceiptsDAO{
             if(friend.getProfileImage() == null){
                 User credentialFriend = getCredentialUser(friend.getEmail());
                 friend.setProfileImage(credentialFriend.getProfileImage());
-                fetchAccessingFriend(email, encodeString(friend.getEmail()));
+                if(credentialFriend.getProfileImage() != null){
+                    fetchAccessingFriend(email, encodeString(friend.getEmail()));
+                }
             }
         }
         return accessingFriendsList;
@@ -285,7 +287,9 @@ public class FirebaseDao implements ReceiptsDAO{
             if(friend.getProfileImage() == null){
                 User credentialFriend = getCredentialUser(friend.getEmail());
                 friend.setProfileImage(credentialFriend.getProfileImage());
-                fetchAccessingFriend(encodeString(friend.getEmail()),email);
+                if(credentialFriend.getProfileImage() != null){
+                    fetchAccessingFriend(encodeString(friend.getEmail()),email);
+                }
             }
         }
         return viewingFriendList;
@@ -370,7 +374,9 @@ public class FirebaseDao implements ReceiptsDAO{
             if(friend.getProfileImage() == null){
                 User credentialFriend = getCredentialUser(friend.getEmail());
                 friend.setProfileImage(credentialFriend.getProfileImage());
-                fetchRequests(email, encodeString(friend.getEmail()));
+                if(credentialFriend.getProfileImage() != null){
+                    fetchRequests(email, encodeString(friend.getEmail()));
+                }
             }
         }
 

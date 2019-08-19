@@ -196,6 +196,7 @@ public class FirebaseDao implements ReceiptsDAO{
             receiptURL = encodeString(receiptURL);
             receipt.setAttachmentURL(receiptURL);
         }
+        receipt.setAttachmentURL(encodeString(receipt.getAttachmentURL()));
         email = encodeString(email);
         receipt.resetBody();
         receipt = encodeReceipt(receipt);
@@ -237,9 +238,27 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
 
-        return new ArrayList<>(json.fromJson(decodeString, AccessPermissionFriendshipResponse.class)
+        List<User> accessingFriendsList = new ArrayList<>(json.fromJson(decodeString, AccessPermissionFriendshipResponse.class)
                 .getAccessPermissionFriendships(email)
                 .values());
+        for(User friend : accessingFriendsList){
+            if(friend.getProfileImage() == null){
+                User credentialFriend = getCredentialUser(friend.getEmail());
+                friend.setProfileImage(credentialFriend.getProfileImage());
+                fetchAccessingFriend(email, encodeString(friend.getEmail()));
+            }
+        }
+        return accessingFriendsList;
+    }
+
+    private void fetchAccessingFriend(String receiverEmail, String requesterEmail) throws Throwable {
+        removeFriendShip(receiverEmail,requesterEmail);
+        saveFriendship(receiverEmail,requesterEmail);
+    }
+
+    private void fetchRequests(String receiverEmail, String requesterEmail) throws Throwable {
+        removeFriendShipRequest(receiverEmail,requesterEmail);
+        sendFriendshipRequest(receiverEmail,requesterEmail);
     }
 
     @Override
@@ -250,9 +269,17 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
 
-        return new ArrayList<>(json.fromJson(decodeString, ViewingPermissionFriendshipResponse.class)
+        List<User> viewingFriendList = new ArrayList<>(json.fromJson(decodeString, ViewingPermissionFriendshipResponse.class)
                 .getViewingPermissionFriendships(email)
                 .values());
+        for(User friend : viewingFriendList){
+            if(friend.getProfileImage() == null){
+                User credentialFriend = getCredentialUser(friend.getEmail());
+                friend.setProfileImage(credentialFriend.getProfileImage());
+                fetchAccessingFriend(encodeString(friend.getEmail()),email);
+            }
+        }
+        return viewingFriendList;
     }
 
     public void addLogo(String companyName, String URL) throws JacksonUtilityException, UnsupportedEncodingException, FirebaseException {
@@ -276,11 +303,15 @@ public class FirebaseDao implements ReceiptsDAO{
 
     @Override
     public void acceptFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable {
-        User receiverUser = getCredentialUser(receiverEmail);
-        User requesterUser = getCredentialUser(requesterEmail);
         requesterEmail = encodeString(requesterEmail);
         receiverEmail = encodeString(receiverEmail);
         removeFriendShipRequest(receiverEmail,requesterEmail);
+        saveFriendship(receiverEmail,requesterEmail);
+    }
+
+    private void saveFriendship(String receiverEmail, String requesterEmail) throws Throwable{
+        User receiverUser = getCredentialUser(decodeString(receiverEmail));
+        User requesterUser = getCredentialUser(decodeString(requesterEmail));
         final String userFriendShipAccessPermissionPath = "Users/friendships/" + requesterEmail + "/accessPermission";
         Map<String,User> newFriendShipMap = new HashMap<>();
         newFriendShipMap.put(receiverEmail,receiverUser);
@@ -304,7 +335,7 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     @Override
-    public void removeFriendShip(String requesterEmail, String toDeleteEmail) throws Throwable {
+    public void removeFriendShip(String toDeleteEmail,String requesterEmail) throws Throwable {
         requesterEmail = encodeString(requesterEmail);
         toDeleteEmail = encodeString(toDeleteEmail);
         final String userFriendShipAccessPermissionToDeletePath = "Users/friendships/" + toDeleteEmail + "/accessPermission/" + requesterEmail;
@@ -316,12 +347,21 @@ public class FirebaseDao implements ReceiptsDAO{
     @Override
     public List<User> getAllRequestsByUser(String email) throws Throwable {
         final String userRequestsPath = "Users";
-        response = firebase.get( userRequestsPath);
+        response = firebase.get(userRequestsPath);
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
-        return new ArrayList<>(json.fromJson(decodeString, RequestsResponse.class)
+        List<User> friendRequests =  new ArrayList<>(json.fromJson(decodeString, RequestsResponse.class)
                 .getRequests(email)
                 .values());
+        for(User friend : friendRequests){
+            if(friend.getProfileImage() == null){
+                User credentialFriend = getCredentialUser(friend.getEmail());
+                friend.setProfileImage(credentialFriend.getProfileImage());
+                fetchRequests(email, encodeString(friend.getEmail()));
+            }
+        }
+
+        return friendRequests;
     }
 
     @Override

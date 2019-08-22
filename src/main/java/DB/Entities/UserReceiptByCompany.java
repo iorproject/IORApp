@@ -7,7 +7,7 @@ public class UserReceiptByCompany implements Serializable {
     private Map<String,Receipt> receipt;
 
     public Receipt getCompanyReceipt(String id) {
-        return !receipt.isEmpty()?
+        return receipt != null && !receipt.isEmpty()?
                 receipt.get(id):
                 null;
     }

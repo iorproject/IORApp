@@ -116,7 +116,7 @@ public class FirebaseDao implements ReceiptsDAO{
             return new ArrayList<>();
         }
         if(receipts.getUserReceipts() == null){
-            return null;
+            return Collections.EMPTY_LIST;
         }
         receipts.getUserReceipts().values()
                 .forEach(receiptsMap -> receiptsMap.values().forEach(
@@ -213,7 +213,10 @@ public class FirebaseDao implements ReceiptsDAO{
         response = firebase.get(userPath);
         Gson json = new Gson();
         CredentialsResponse credentialsResponse = json.fromJson(decodeString(response.getRawBody()),CredentialsResponse.class);
-        return new ArrayList<>(credentialsResponse.getCredentials().values());
+        if(credentialsResponse.getCredentials() != null && !credentialsResponse.getCredentials().isEmpty()){
+            return new ArrayList<>(credentialsResponse.getCredentials().values());
+        }
+        return Collections.EMPTY_LIST;
     }
 
     @Override
@@ -226,8 +229,8 @@ public class FirebaseDao implements ReceiptsDAO{
     @Override
     public List<String> getCompaniesNames(String email) throws Throwable {
         UserReceipts receipts = getAllReceipts(email);
-        if(receipts == null){
-            return new ArrayList<>();
+        if(receipts == null || receipts.getUserReceipts().isEmpty()){
+            return Collections.EMPTY_LIST;
         }
         return new ArrayList<>(receipts.getUserReceipts().keySet());
 
@@ -242,7 +245,7 @@ public class FirebaseDao implements ReceiptsDAO{
         String decodeString = decodeString(response.getRawBody());
         AccessPermissionFriendshipResponse accessPermissionFriendshipResponse = json.fromJson(decodeString,AccessPermissionFriendshipResponse.class);
         if(accessPermissionFriendshipResponse.getAccessPermissionFriendships(email) == null){
-            return null;
+            return Collections.EMPTY_LIST;
         }
         List<User> accessingFriendsList = new ArrayList<>(accessPermissionFriendshipResponse
                 .getAccessPermissionFriendships(email)
@@ -277,11 +280,11 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
         ViewingPermissionFriendshipResponse viewingPermissionFriendshipResponse = json.fromJson(decodeString,ViewingPermissionFriendshipResponse.class);
-        if(viewingPermissionFriendshipResponse.getViewingPermissionFriendships(email) == null){
-            return null;
+        if(viewingPermissionFriendshipResponse.getViewingPermissionFriendships() == null){
+            return Collections.EMPTY_LIST;
         }
         List<User> viewingFriendList = new ArrayList<>(viewingPermissionFriendshipResponse
-                .getViewingPermissionFriendships(email)
+                .getViewingPermissionFriendships()
                 .values());
         for(User friend : viewingFriendList){
             if(friend.getProfileImage() == null){
@@ -365,7 +368,7 @@ public class FirebaseDao implements ReceiptsDAO{
         String decodeString = decodeString(response.getRawBody());
         RequestsResponse requestsResponse = json.fromJson(decodeString,RequestsResponse.class);
         if(requestsResponse.getRequests(email) == null){
-            return null;
+            return Collections.EMPTY_LIST;
         }
         List<User> friendRequests =  new ArrayList<>(requestsResponse
                 .getRequests(email)
@@ -390,7 +393,10 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
         CredentialsResponse credentialsResponse = json.fromJson(decodeString,CredentialsResponse.class);
-        return credentialsResponse.getCredentials().get(email);
+        if(credentialsResponse.getCredentials() != null && credentialsResponse.getCredentials().containsKey(email)){
+            return credentialsResponse.getCredentials().get(email);
+        }
+        return null;
     }
 
     @Override

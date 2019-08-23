@@ -312,6 +312,7 @@ public class FirebaseDao implements ReceiptsDAO{
         requesterEmail = encodeString(requesterEmail);
         receiverEmail = encodeString(receiverEmail);
         final String userRequestsPath = "Users/requests/" + receiverEmail;
+        requesterUser = encodeUser(requesterUser);
         Map<String,User> newRequestMap = new HashMap<>();
         newRequestMap.put(requesterEmail,requesterUser);
         response = firebase.patch(userRequestsPath,new Gson().toJson(newRequestMap));

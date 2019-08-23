@@ -7,7 +7,7 @@ public class RequestsResponse {
     private Map<String,Map<String,User>> requests;
 
     public Map<String,User> getRequests(String email) {
-        if(requests.containsKey(email)){
+        if(requests != null && requests.containsKey(email)){
             return requests.get(email);
         }
         return new HashMap<>();

@@ -6,7 +6,7 @@ import java.util.Map;
 public class ViewingPermissionFriendshipResponse {
     private Map<String,User> viewingPermission;
 
-    public Map<String,User> getViewingPermissionFriendships(String email) {
+    public Map<String,User> getViewingPermissionFriendships() {
             return viewingPermission;
     }
 }

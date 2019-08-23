@@ -113,10 +113,7 @@ public class FirebaseDao implements ReceiptsDAO{
     public List<Receipt> getUserReceipts(String email) throws Throwable{
         List<Receipt> userReceipts = new ArrayList<>();
         UserReceipts receipts = getAllReceipts(email);
-        if(receipts == null){
-            return new ArrayList<>();
-        }
-        if(receipts.getUserReceipts() == null){
+        if(receipts == null || receipts.getUserReceipts() == null){
             return Collections.EMPTY_LIST;
         }
         receipts.getUserReceipts().values()
@@ -247,7 +244,7 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
         AccessPermissionFriendshipResponse accessPermissionFriendshipResponse = json.fromJson(decodeString,AccessPermissionFriendshipResponse.class);
-        if(accessPermissionFriendshipResponse.getAccessPermissionFriendships(email) == null){
+        if(accessPermissionFriendshipResponse == null || accessPermissionFriendshipResponse.getAccessPermissionFriendships(email) == null){
             return Collections.EMPTY_LIST;
         }
         List<User> accessingFriendsList = new ArrayList<>(accessPermissionFriendshipResponse
@@ -283,7 +280,7 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
         ViewingPermissionFriendshipResponse viewingPermissionFriendshipResponse = json.fromJson(decodeString,ViewingPermissionFriendshipResponse.class);
-        if(viewingPermissionFriendshipResponse.getViewingPermissionFriendships() == null){
+        if(viewingPermissionFriendshipResponse == null || viewingPermissionFriendshipResponse.getViewingPermissionFriendships() == null){
             return Collections.EMPTY_LIST;
         }
         List<User> viewingFriendList = new ArrayList<>(viewingPermissionFriendshipResponse
@@ -371,7 +368,7 @@ public class FirebaseDao implements ReceiptsDAO{
         Gson json = new Gson();
         String decodeString = decodeString(response.getRawBody());
         RequestsResponse requestsResponse = json.fromJson(decodeString,RequestsResponse.class);
-        if(requestsResponse.getRequests(email) == null){
+        if(requestsResponse == null || requestsResponse.getRequests(email) == null){
             return Collections.EMPTY_LIST;
         }
         List<User> friendRequests =  new ArrayList<>(requestsResponse

@@ -4,15 +4,9 @@ import main.java.DB.DBHandler;
 import main.java.DB.Entities.CompanyLogo;
 import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.User;
-import main.java.DB.error.FirebaseException;
-import main.java.DB.error.JacksonUtilityException;
-import main.java.DB.util.JacksonUtility;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class IorEngine {
 
@@ -140,6 +134,22 @@ public class IorEngine {
     public static void setUserProfileImage(String email, String profileImage) throws Throwable
     {
         DBHandler.getInstance().saveUserDisplayPicture(email, profileImage);
+    }
+
+    public static List<User> getFollowers(String email)throws Throwable
+    {
+        return DBHandler.getInstance().getAllViewingPermissionFriendshipsByUser(email);
+    }
+
+    public static List<User> getMemberShipRequestUsers(String email) throws Throwable
+    {
+        return DBHandler.getInstance().getAllRequestsByUser(email);
+
+    }
+
+    public static void acceptFriendship(String userEmail, String friendEmail) throws Throwable
+    {
+        DBHandler.getInstance().acceptFriendshipRequest(userEmail,friendEmail);
     }
 
 }

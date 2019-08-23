@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "UserPartnersServlet", urlPatterns = {"/userPartners"})
 
@@ -23,10 +25,14 @@ public class UserPartnersServlet extends HttpServlet {
 
         response.setContentType("application/json");
         String email = request.getParameter("email");
+        Map<String, List<User>> result = new HashMap<>();
+
 
         try {
-            List<User> partners = IorEngine.getUserPartners(email);
-            String resp = new Gson().toJson(partners);
+            result.put("partners",IorEngine.getUserPartners(email));
+           result.put("followers", IorEngine.getFollowers(email));
+            result.put("requestusers", IorEngine.getMemberShipRequestUsers(email));
+            String resp = new Gson().toJson(result);
             try (PrintWriter out = response.getWriter()) {
                 out.println(resp);
                 out.flush();

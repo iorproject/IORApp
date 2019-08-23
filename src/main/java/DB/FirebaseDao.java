@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
 
 public class FirebaseDao implements ReceiptsDAO{
     private static FirebaseDao firebaseDao = null;
-    private final String firebase_baseUrl = "https://iorproject.firebaseio.com/";
+//    private final String firebase_baseUrl = "https://iorproject.firebaseio.com/";
+    private final String firebase_baseUrl = "https://iorbackup.firebaseio.com/";
     private Firebase firebase;
     private FirebaseResponse response;
     private Storage firebaseStorage;
@@ -176,9 +177,11 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     private User encodeUser(User user){
-        user.setAccessToken(encodeString(user.getAccessToken()));
-        user.setRefreshToken(encodeString(user.getRefreshToken()));
-        user.setEmail(encodeString(user.getEmail()));
+        if(user != null){
+            user.setAccessToken(encodeString(user.getAccessToken()));
+            user.setRefreshToken(encodeString(user.getRefreshToken()));
+            user.setEmail(encodeString(user.getEmail()));
+        }
         return user;
     }
 

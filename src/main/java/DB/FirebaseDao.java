@@ -352,7 +352,7 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     @Override
-    public void removeFriendShip(String toDeleteEmail,String requesterEmail) throws Throwable {
+    public void removeFriendShip(String requesterEmail,String toDeleteEmail) throws Throwable {
         requesterEmail = encodeString(requesterEmail);
         toDeleteEmail = encodeString(toDeleteEmail);
         final String userFriendShipAccessPermissionToDeletePath = "Users/friendships/" + toDeleteEmail + "/accessPermission/" + requesterEmail;

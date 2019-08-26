@@ -376,7 +376,10 @@ public class GmailApiWrapper implements IEmailApiWrapper {
                 } catch (Exception ignored) {
                 }
                 String to = headers.stream().filter(h -> h.getName().equals("To")).collect(Collectors.toList()).get(0).getValue();
-
+                try {
+                    to = to.substring(to.indexOf('<') + 1, to.lastIndexOf('>'));
+                } catch (Exception ignored) {
+                }
                 gmailMessage.setTo(to);
                 gmailMessage.setSubject(subject);
                 gmailMessage.setDate(date);

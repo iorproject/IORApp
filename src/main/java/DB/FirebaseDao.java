@@ -191,7 +191,7 @@ public class FirebaseDao implements ReceiptsDAO{
 
     @Override
     public void insertReceipt(String email, Receipt receipt) throws Throwable {
-        String receiptURL = "";
+        String receiptURL = null;
         receipt.setId(receipt.getCreationDate().getTime());
         if(receipt.getType() == eContentType.PDF){
             String receiptPathInStorage = "receipts/" + email + "/" + receipt.getId() + "/" + receipt.getFileName();
@@ -199,7 +199,9 @@ public class FirebaseDao implements ReceiptsDAO{
             receiptURL = encodeString(receiptURL);
             receipt.setAttachmentURL(receiptURL);
         }
-        receipt.setAttachmentURL(encodeString(receipt.getAttachmentURL()));
+        if(receipt.getAttachmentURL() != null){
+            receipt.setAttachmentURL(encodeString(receipt.getAttachmentURL()));
+        }
         email = encodeString(email);
         receipt.resetBody();
         receipt = encodeReceipt(receipt);

@@ -1,26 +1,46 @@
 package ReceiptBodyRecognition;
-
+import java.util.ArrayList;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PriceFinder {
-//TODO:or: adding ils
-    public static String findPriceExpression(String content){
-        final String foreignRegex = "(ils|usd|eur|€|\\$)\\s?(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2}))|(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2})?)\\s?(ils|usd|eur|€|\\$)";
-        final String foreignExpression = find(content, foreignRegex);
-        final String isrRegex = "(שקל|ש'ח|ש\"ח|₪)(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2})?)\\s?|(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2})?)\\s?(שקל|ש'ח|ש\"ח|₪)";
-        if (foreignExpression == null){
-            String isrExpression = find(content, isrRegex);
-            if(isrExpression == null)
-                return find(content, "(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2})?)\\s?|(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2})?)\\s?");
-            else
-                return isrExpression;
+    private static final Logger LOGGER = Logger.getLogger("MyLog");
+
+    public static String findPriceExpression(String content, int index){
+        ArrayList<String> all = findAll(content.substring(index - 15));
+        if (all == null){
+            return null;
         }
-        return foreignExpression;
+
+        ArrayList<String> farFromIndex = new ArrayList<>();
+        for(String str : all){
+            if(content.lastIndexOf(str) >= index && content.lastIndexOf(str) - index <= 150)
+                return str;
+            else if (content.lastIndexOf(str) >= index && content.lastIndexOf(str) - index > 150){
+                farFromIndex.add(str);
+            }
+        }
+
+        if(farFromIndex.size() == 0)
+            return all.get(all.size() - 1);
+
+        if(farFromIndex.size() == all.size())
+            return all.get(0);
+
+        for (String str : farFromIndex)
+            all.remove(str);
+
+        return all.get(all.size() - 1);
+    }
+
+    private static ArrayList<String> findAll(String content) {
+        final String regex = "(ils|usd|eur|€|\\$|שקל|ש'ח|ש\"ח|₪)[ \\s*<>?#!@]*(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2})?)\\s?|(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2})?)[ \\s*<>?#!@]*(ils|usd|eur|€|\\$|שקל|ש'ח|ש\"ח|₪)";
+        return findList(content,regex);
     }
 
     public static float getPriceNumber(String priceExpression){
-        final String priceNumberRegex = "\\s?(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2}))|(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2})?)\\s?";
+        final String priceNumberRegex = "(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d{2})?)\\s?";
         String strNumber = find(priceExpression, priceNumberRegex);
         strNumber = strNumber.replace(",", "");
         strNumber = strNumber.trim();
@@ -52,6 +72,19 @@ public class PriceFinder {
             firstWord = firstWord + content.split("[ \\r\\t\\n\\,\\?\\;\\.\\:\\!]")[1].toLowerCase();
 
         return find(firstWord, receiptNumberRegex);
+    }
+
+    private static ArrayList<String> findList(String content, String regex) {
+        ArrayList<String> list = new ArrayList<String>();
+        Matcher m = Pattern.compile(regex)
+                .matcher(content);
+        while (m.find()) {
+            String match = m.group();
+            if(find(match, "^(?=.*\\d)(?=.*[1-9]).{1,10}$") != null)
+                list.add(match);
+        }
+
+        return list.size() > 0 ? list : null;
     }
 
     private static String find(String content, String regex){

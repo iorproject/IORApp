@@ -3,34 +3,28 @@ package EmailProcessor;
 import dbObjects.ApproveIndicator;
 import emailRecognition.EmailRecognitionBuilder;
 import emailRecognition.IEmailRecognition;
-import gmailApiWrapper.EmailApiWrapperFactory;
-import gmailApiWrapper.EmailMessage;
-import gmailApiWrapper.IEmailApiWrapper;
-import gmailApiWrapper.eEmailApi;
+import gmailApiWrapper.*;
 import main.java.DB.DBHandler;
 import main.java.DB.Entities.*;
 import main.java.DB.ReceiptsDAO;
-import main.java.DB.error.FirebaseException;
-
-import java.io.UnsupportedEncodingException;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Processor {
     private ApproveIndicator approveIndicators;
     private TotalIndicator totalIndicators;
     private OrderNumberApproveIndicator orderNumberApproveIndicator;
     private ReceiptsDAO dbHandler;
+    private static final Logger LOGGER = Logger.getLogger("MyLog");
 
     public void Run(){
         init();
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.scheduleAtFixedRate(this::runAllUsers, 0, 20, TimeUnit.MINUTES);
+        service.scheduleAtFixedRate(this::runAllUsers, 0, 10, TimeUnit.MINUTES);
     }
 
     private void init() {
@@ -47,7 +41,7 @@ public class Processor {
     private void runAllUsers(){
         try {
             dbHandler.getAllUsers().forEach(user -> {
-                if (user.getEmail().startsWith("ior"))
+                if(user.getEmail().startsWith("omerb"))
                     runUser(user);
             });
         } catch (Throwable throwable) {
@@ -60,9 +54,9 @@ public class Processor {
             try{
                 checkUserMails(user);
             } catch (Throwable throwable) {
+                LOGGER.log(Level.WARNING, throwable.getMessage());
                 throwable.printStackTrace();
             }
-
         }).run();
     }
 
@@ -74,16 +68,20 @@ public class Processor {
                 orderNumberApproveIndicator);
         List<EmailMessage> messages = setEmailMessages(user);
         for(EmailMessage emailMessage : messages){
-            if(emailMessage.getSubject().contains("תודה לך על הזמנתך"))
-                emailRecognition.Recognize(emailMessage);
+            LOGGER.log(Level.INFO, "***************************" +
+                    emailMessage.getSubject() +
+                    "***************************");
+            emailRecognition.Recognize(emailMessage);
         }
+        
         setLastServed(messages, user, now);
     }
 
     private List<EmailMessage> setEmailMessages(User user) throws Throwable {
+        final long defaultStartTime = 1546838041821l; //07.01.19
         IEmailApiWrapper emailApiWrapper = setEmailWrapper(user);
         Date from = dbHandler.getLastSearchMailTime(user.getEmail());
-        from = from == null ? new Date(0) : from;
+        from = from == null ? new Date(defaultStartTime) : from;
         return emailApiWrapper.getMessages(from);
     }
 
@@ -97,10 +95,16 @@ public class Processor {
     }
 
     private void setLastServed(List<EmailMessage> messages, User user, Date now) throws Throwable {
-        EmailMessage lastEmailMessage = messages.
-                stream().
-                max(Comparator.comparing(EmailMessage::getDate)).get();
-        Date date = lastEmailMessage != null ? lastEmailMessage.getDate() : now;
+        Date date;
+        try{
+            EmailMessage lastEmailMessage = messages.
+                    stream().
+                    max(Comparator.comparing(EmailMessage::getDate)).get();
+            date = lastEmailMessage.getDate();
+        } catch (Exception ignored){
+            date = now;
+        }
+
         dbHandler.setLastSearchMailTime(user.getEmail(), date);
     }
 }

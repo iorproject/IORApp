@@ -355,42 +355,47 @@ public class GmailApiWrapper implements IEmailApiWrapper {
         }
 
         for (Message m : messages) {
-            EmailMessage gmailMessage = new GmailMessage(m.getId());
-            List<MessagePartHeader> headers = m.getPayload().getHeaders();
+            try {
+                EmailMessage gmailMessage = new GmailMessage(m.getId());
+                List<MessagePartHeader> headers = m.getPayload().getHeaders();
 
-            String dateStr = headers.stream().filter(h -> h.getName().equals("Date")).collect(Collectors.toList()).get(0).getValue();
-            dateStr = dateStr.substring(0, dateStr.lastIndexOf(' '));
-            SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss"
-                    , Locale.US);
-            Date date = formatter.parse(dateStr);
-            if (date.before(startingTime))
-                break;
+                String dateStr = headers.stream().filter(h -> h.getName().equals("Date")).collect(Collectors.toList()).get(0).getValue();
+                dateStr = dateStr.substring(0, dateStr.lastIndexOf(' '));
+                SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss"
+                        , Locale.US);
+                Date date = formatter.parse(dateStr);
+                if (date.before(startingTime))
+                    break;
 //            if (date.before(startingTime))
 //                break;
 
-            String subject = headers.stream().filter(h -> h.getName().equals("Subject")).collect(Collectors.toList()).get(0).getValue();
-            String from = headers.stream().filter(h -> h.getName().equals("From")).collect(Collectors.toList()).get(0).getValue();
-            from = from.substring(from.indexOf('<') + 1, from.lastIndexOf('>'));
-            String to = headers.stream().filter(h -> h.getName().equals("To")).collect(Collectors.toList()).get(0).getValue();
-
-            gmailMessage.setTo(to);
-            gmailMessage.setSubject(subject);
-            gmailMessage.setDate(date);
-            gmailMessage.setFrom(from);
-
-
-            String body = getBody(m);
-            if (body != null) {
-                body = StringUtils.newStringUtf8(Base64.decodeBase64(body));
-                if (m.getPayload().getMimeType().equals("text/html")) {
-                    body = Jsoup.parse(body).text();
+                String subject = headers.stream().filter(h -> h.getName().equals("Subject")).collect(Collectors.toList()).get(0).getValue();
+                String from = headers.stream().filter(h -> h.getName().equals("From")).collect(Collectors.toList()).get(0).getValue();
+                try {
+                    from = from.substring(from.indexOf('<') + 1, from.lastIndexOf('>'));
+                } catch (Exception ignored) {
                 }
-            }
+                String to = headers.stream().filter(h -> h.getName().equals("To")).collect(Collectors.toList()).get(0).getValue();
 
-            gmailMessage.setContent(body);
-            List<EmailAttachment> attachments = getAttachments(m);
-            gmailMessage.setAttachments(attachments);
-            results.add(gmailMessage);
+                gmailMessage.setTo(to);
+                gmailMessage.setSubject(subject);
+                gmailMessage.setDate(date);
+                gmailMessage.setFrom(from);
+
+
+                String body = getBody(m);
+                if (body != null) {
+                    body = StringUtils.newStringUtf8(Base64.decodeBase64(body));
+                    if (m.getPayload().getMimeType().equals("text/html")) {
+                        body = Jsoup.parse(body).text();
+                    }
+                }
+
+                gmailMessage.setContent(body);
+                List<EmailAttachment> attachments = getAttachments(m);
+                gmailMessage.setAttachments(attachments);
+                results.add(gmailMessage);
+            } catch (Exception ignored) { }
         }
 
         return results;

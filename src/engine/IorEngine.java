@@ -13,7 +13,7 @@ public class IorEngine {
 
     public static void registerUser(User user) throws Throwable {
 
-        DBHandler.getInstance().registerUser(user);
+        DBHandler.getInstance().registerUser(user,null);
 
     }
 

@@ -76,8 +76,8 @@ public class DBHandler implements ReceiptsDAO{
     }
 
     @Override
-    public void registerUser(User user) throws Throwable, JacksonUtilityException {
-        FirebaseDao.getInstance().registerUser(user);
+    public void registerUser(User user, Date startDateToSearchReceipts) throws Throwable, JacksonUtilityException {
+        FirebaseDao.getInstance().registerUser(user, startDateToSearchReceipts);
     }
 
     @Override

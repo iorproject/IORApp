@@ -222,7 +222,10 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     @Override
-    public void registerUser(User user) throws Throwable {
+    public void registerUser(User user, Date startDateToSearchReceipts) throws Throwable {
+        if(startDateToSearchReceipts != null){
+            setLastSearchMailTime(user.getEmail(),startDateToSearchReceipts);
+        }
         user = encodeUser(user);
         final String userCredentialsPath = "Users/credentials/" + user.getEmail();
         response = firebase.patch(userCredentialsPath,new Gson().toJson(user));
@@ -440,6 +443,6 @@ public class FirebaseDao implements ReceiptsDAO{
         User user = getCredentialUser(email);
         encodeBitmap = encodeString(encodeBitmap);
         user.setProfileImage(encodeBitmap);
-        registerUser(user);
+        registerUser(user,null);
     }
 }

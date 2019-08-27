@@ -19,7 +19,7 @@ public interface ReceiptsDAO {
     Date getLastSearchMailTime(String email) throws Throwable;
     void insertReceipt(String email, Receipt receipt) throws Throwable;
     List<User> getAllUsers() throws Throwable;
-    void registerUser(User user) throws Throwable;
+    void registerUser(User user, Date startDateToSearchReceipts) throws Throwable;
     List<String> getCompaniesNames(String email) throws Throwable;
     List<User> getAllAccessPermissionFriendshipsByUser(String email) throws Throwable;
     List<User> getAllViewingPermissionFriendshipsByUser(String email) throws Throwable;

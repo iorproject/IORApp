@@ -24,7 +24,7 @@ public class Processor {
     public void Run(){
         init();
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.scheduleAtFixedRate(this::runAllUsers, 0, 10, TimeUnit.MINUTES);
+        service.scheduleAtFixedRate(this::runAllUsers, 0, 5, TimeUnit.MINUTES);
     }
 
     private void init() {
@@ -40,9 +40,7 @@ public class Processor {
 
     private void runAllUsers(){
         try {
-            dbHandler.getAllUsers().forEach(user -> {
-                    runUser(user);
-            });
+            dbHandler.getAllUsers().forEach(this::runUser);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

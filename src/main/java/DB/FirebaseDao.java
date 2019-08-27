@@ -199,7 +199,9 @@ public class FirebaseDao implements ReceiptsDAO{
             receiptURL = encodeString(receiptURL);
             receipt.setAttachmentURL(receiptURL);
         }
-        receipt.setAttachmentURL(encodeString(receipt.getAttachmentURL()));
+        if(receipt.getAttachmentURL() != null){
+            receipt.setAttachmentURL(encodeString(receipt.getAttachmentURL()));
+        }
         email = encodeString(email);
         receipt.resetBody();
         receipt = encodeReceipt(receipt);

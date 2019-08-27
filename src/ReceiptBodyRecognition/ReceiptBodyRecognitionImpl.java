@@ -5,6 +5,8 @@ import main.java.DB.Entities.OrderNumberApproveIndicator;
 import main.java.DB.Entities.TotalIndicator;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
     private final int PASS_SCORE = 30;
@@ -14,8 +16,9 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
     private float totalPrice;
     private String currency;
     private String orderNumber;
+    private static final Logger LOGGER = Logger.getLogger("MyLog");
 
-    public ReceiptBodyRecognitionImpl(
+    ReceiptBodyRecognitionImpl(
             ApproveIndicator approveIndicators,
             TotalIndicator totalIndicators,
             OrderNumberApproveIndicator orderNumberApproveIndicator
@@ -64,22 +67,31 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
         try{
             String totalIdentifier = String.valueOf(allStrings.
                     stream().
-                    filter(str -> content.contains(str)).
+                    filter(content::contains).
                     findFirst().get());
             int index = content.lastIndexOf(totalIdentifier);
-            return !totalIdentifier.equals("") && findPrice(content.substring(index));
+            LOGGER.log(Level.WARNING, "\t $$$$$$   Identifier = " + totalIdentifier);
+            return !totalIdentifier.equals("") && findPrice(content, index);
         } catch (Exception e){
+            LOGGER.log(Level.WARNING, "\t recognizeTotal failed");
             return false;
         }
     }
 
-    private boolean findPrice(String content) {
-        String priceExpression = PriceFinder.findPriceExpression(content);
-        if (priceExpression == null)
+    private boolean findPrice(String content, int index) {
+        try {
+            String priceExpression = PriceFinder.findPriceExpression(content, index);
+            if (priceExpression == null){
+                LOGGER.log(Level.WARNING, "\t findPrice failed");
+                return false;
+            }
+            totalPrice = PriceFinder.getPriceNumber(priceExpression);
+            currency = PriceFinder.getCurrency(priceExpression);
+            return !currency.equals("") && totalPrice != -1;
+        } catch (Exception ignored){
+            LOGGER.log(Level.WARNING, "\t findPrice Error");
             return false;
-        totalPrice = PriceFinder.getPriceNumber(priceExpression);
-        currency = PriceFinder.getCurrency(priceExpression);
-        return !currency.equals("") && totalPrice != -1;
+        }
     }
 
     private boolean recognizeApproved(String content) {
@@ -92,6 +104,7 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
                     return true;
             }
         }
+        LOGGER.log(Level.WARNING, "\t recognizeApproved failed");
         return false;
     }
 
@@ -107,17 +120,12 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
         try{
             String receiptNumberIdentifier = String.valueOf(allStrings.
                     stream().
-                    filter(str -> content.contains(str)).
+                    filter(content::contains).
                     findFirst().get());
+            LOGGER.log(Level.WARNING, "\t $$$$$$   receiptNumberIdentifier = " + receiptNumberIdentifier);
             return findOneReceiptNumberMatch(content, receiptNumberIdentifier);
-
-//            int index = content.lastIndexOf(receiptNumberIdentifier);
-//            if(!receiptNumberIdentifier.equals("")) {
-//                return PriceFinder.getReceiptNumber(content.substring(index));
-//            } else {
-//                return "";
-//            }
         } catch (Exception e){
+            LOGGER.log(Level.WARNING, "\t findReceiptNumber failed");
             return "";
         }
     }
@@ -129,12 +137,15 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
             content = content.substring(index);
             content = content.substring(receiptNumberIdentifier.length());
             String match = PriceFinder.getReceiptNumber(content);
-            if(match != null)
+            if(match != null){
+                LOGGER.log(Level.WARNING, "\t %%%%number = " +  match);
                 return match;
+            }
             content = content.substring(receiptNumberIdentifier.length());
             index = content.indexOf(receiptNumberIdentifier);
         }
 
+        LOGGER.log(Level.WARNING, "\t findOneReceiptNumberMatch failed");
         return "";
     }
 }

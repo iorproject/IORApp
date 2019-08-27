@@ -41,7 +41,6 @@ public class Processor {
     private void runAllUsers(){
         try {
             dbHandler.getAllUsers().forEach(user -> {
-                if(user.getEmail().startsWith("ior"))
                     runUser(user);
             });
         } catch (Throwable throwable) {

@@ -57,6 +57,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
             hostName = originalHostName;
         }
 
+        hostName = hostName.substring(0,1).toUpperCase() + hostName.substring(1);
         LOGGER.log(Level.INFO, "@@@@Company Name:" + hostName);
         return Arrays.stream(excludeMails).anyMatch(hostName::equals);
     }

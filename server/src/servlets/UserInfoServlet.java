@@ -28,14 +28,20 @@ public class UserInfoServlet extends HttpServlet {
         response.setContentType("application/json");
 
         String email = request.getParameter("email");
-        User user = IorEngine.getUserInfo(email);
-        User responseUser = new User(email, user.getName(), user.getRegisterDate(), user.getProfileImage());
+        try {
+            User user = IorEngine.getUserInfo(email);
+            User responseUser = new User(email, user.getName(), user.getRegisterDate(), user.getProfileImage());
 
-        String resp = new Gson().toJson(responseUser);
-        try (PrintWriter out = response.getWriter()) {
-            out.println(resp);
-            out.flush();
+            String resp = new Gson().toJson(responseUser);
+            try (PrintWriter out = response.getWriter()) {
+                out.println(resp);
+                out.flush();
+            }
         }
+        catch (Throwable t) {
+            response.setStatus(Constants.DB_ERROR_CODE);
+        }
+
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

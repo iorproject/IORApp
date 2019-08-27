@@ -180,12 +180,15 @@ public class GmailApiWrapper implements IEmailApiWrapper {
 //        }
 
 
-    private List<Message> getGmailMessages() throws IOException {
+    private List<Message> getGmailMessages(Date startingDate) throws IOException {
 
+
+        String start = new SimpleDateFormat("yyyy/MM/dd").format(startingDate);
+        String query = "after:" + start;
 
         ListMessagesResponse response = service.users().messages().list(userId)
-                .setQ("newer_than:10d").execute();
-//                .execute();
+                .setQ(query).execute();
+
         List<Message> messages = new ArrayList<>();
         List<Message> fullMessages = new ArrayList<>();
         while (response.getMessages() != null) {
@@ -193,8 +196,8 @@ public class GmailApiWrapper implements IEmailApiWrapper {
             if (response.getNextPageToken() != null) {
                 String pageToken = response.getNextPageToken();
                 response = service.users().messages().list(userId)
-                        .setQ("newer_than:1d").execute();
-//                        .execute();
+                        .setQ(query).execute();
+
             } else {
                 break;
             }
@@ -337,7 +340,7 @@ public class GmailApiWrapper implements IEmailApiWrapper {
         List<EmailMessage> results = new ArrayList<>();
         List<Message> messages = null;
         try {
-            messages = getGmailMessages();
+            messages = getGmailMessages(startingTime);
         } catch (GoogleJsonResponseException e1) {
 
             if (e1.getStatusCode() == TOKEN_EXPIRE) {
@@ -349,7 +352,7 @@ public class GmailApiWrapper implements IEmailApiWrapper {
                         .setApplicationName(APPLICATION_NAME)
                         .build();
 
-                messages = getGmailMessages();
+                messages = getGmailMessages(startingTime);
 
             }
         }

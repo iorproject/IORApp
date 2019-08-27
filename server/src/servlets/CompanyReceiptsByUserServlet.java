@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import engine.IorEngine;
 import main.java.DB.Entities.CompanyLogo;
 import main.java.DB.Entities.Receipt;
+import servletsUtils.Constants;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,12 +27,16 @@ public class CompanyReceiptsByUserServlet extends HttpServlet {
         String email = request.getParameter("email");
         String company = request.getParameter("company");
 
-        List<Receipt> receipts = IorEngine.getCompanyReceipts(email, company);
-
-        String resp = new Gson().toJson(receipts);
-        try (PrintWriter out = response.getWriter()) {
-            out.println(resp);
-            out.flush();
+        try {
+            List<Receipt> receipts = IorEngine.getCompanyReceipts(email, company);
+            String resp = new Gson().toJson(receipts);
+            try (PrintWriter out = response.getWriter()) {
+                out.println(resp);
+                out.flush();
+            }
+        }
+        catch (Throwable t) {
+            response.setStatus(Constants.DB_ERROR_CODE);
         }
     }
 

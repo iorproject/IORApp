@@ -21,7 +21,7 @@ public class Shiko {
 
 
             Calendar now = Calendar.getInstance();
-            now.set(2019, 06, 29, 8, 00);
+            now.set(2019, 6, 5, 10, 22, 59);
             Date date = now.getTime();
 
             int xuu = 5;

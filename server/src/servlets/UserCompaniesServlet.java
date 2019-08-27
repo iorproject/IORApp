@@ -3,6 +3,7 @@ package servlets;
 import com.google.gson.Gson;
 import engine.IorEngine;
 import main.java.DB.Entities.CompanyLogo;
+import servletsUtils.Constants;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,13 +23,19 @@ public class UserCompaniesServlet extends HttpServlet {
 
         response.setContentType("application/json");
 
-        List<CompanyLogo> companies = IorEngine.getUserCompanies();
+        try {
+            List<CompanyLogo> companies = IorEngine.getUserCompanies();
 
-        String resp = new Gson().toJson(companies);
-        try (PrintWriter out = response.getWriter()) {
-            out.println(resp);
-            out.flush();
+            String resp = new Gson().toJson(companies);
+            try (PrintWriter out = response.getWriter()) {
+                out.println(resp);
+                out.flush();
+            }
         }
+        catch (Throwable t) {
+            response.setStatus(Constants.DB_ERROR_CODE);
+        }
+
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

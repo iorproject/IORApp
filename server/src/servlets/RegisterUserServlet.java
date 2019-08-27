@@ -42,7 +42,12 @@ public class RegisterUserServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        IorEngine.registerUser(new User(email, name, accessToken, refreshToken, date));
+        try {
+            IorEngine.registerUser(new User(email, name, accessToken, refreshToken, date));
+        }
+        catch (Throwable t) {
+            response.setStatus(Constants.DB_ERROR_CODE);
+        }
 
     }
 

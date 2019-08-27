@@ -11,64 +11,33 @@ import java.util.List;
 public class IorEngine {
 
 
-    public static void registerUser(User user) {
-        try {
-            DBHandler.getInstance().registerUser(user);
-        }
-        catch (Throwable e) {
-        }
-    }
+    public static void registerUser(User user) throws Throwable {
 
-    public static User getUserInfo(String email) {
-
-        User user = null;
-        try {
-            user = DBHandler.getInstance().getCredentialUser(email);
-        }
-        catch (Throwable e) {
-
-        }
-
-        return user;
-    }
-
-    public static List<CompanyLogo> getUserCompanies() {
-
-        List<CompanyLogo> companies = null;
-        List<String> requestsEmails = new ArrayList<>();
-
-        try {
-            companies = DBHandler.getInstance().getAllCompaniesLogo();
-
-        }
-        catch (Throwable t) {
-
-        }
-
-        return companies;
-    }
-
-    public static List<Receipt> getCompanyReceipts(String email, String companyName) {
-
-        List<Receipt> receipts = null;
-        try {
-            receipts = DBHandler.getInstance().getCompanyReceiptsByUser(email, companyName);
-
-        }
-        catch (Throwable t) {
-
+        DBHandler.getInstance().registerUser(user);
 
     }
 
-        return receipts;
+    public static User getUserInfo(String email) throws Throwable {
+
+        return DBHandler.getInstance().getCredentialUser(email);
+
+    }
+
+    public static List<CompanyLogo> getUserCompanies() throws Throwable {
+
+        return DBHandler.getInstance().getAllCompaniesLogo();
+    }
+
+    public static List<Receipt> getCompanyReceipts(String email, String companyName) throws Throwable {
+
+
+            return DBHandler.getInstance().getCompanyReceiptsByUser(email, companyName);
     }
 
     public static List<User> getUserPartners(String email) throws Throwable {
 
-        List<User> partnersDB = null;
 
-
-        partnersDB = DBHandler.getInstance().getAllAccessPermissionFriendshipsByUser(email);
+        List<User> partnersDB = DBHandler.getInstance().getAllAccessPermissionFriendshipsByUser(email);
         for (User user : partnersDB) {
 
             user.setAccessToken(null);

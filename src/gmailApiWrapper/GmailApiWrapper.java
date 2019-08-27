@@ -196,7 +196,7 @@ public class GmailApiWrapper implements IEmailApiWrapper {
             if (response.getNextPageToken() != null) {
                 String pageToken = response.getNextPageToken();
                 response = service.users().messages().list(userId)
-                        .setQ(query).execute();
+                        .setQ(query).setPageToken(pageToken).execute();
 
             } else {
                 break;

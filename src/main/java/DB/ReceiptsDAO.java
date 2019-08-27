@@ -25,7 +25,7 @@ public interface ReceiptsDAO {
     List<User> getAllViewingPermissionFriendshipsByUser(String email) throws Throwable;
     void sendFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable;
     void acceptFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable;
-    void rejectFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable;
+    void rejectFriendshipRequest(String deleterEmail, String deletedEmail) throws Throwable;
     void removeFriendShip(String requesterEmail, String toDeleteEmail) throws Throwable;
     List<User> getAllRequestsByUser(String email) throws Throwable;
     User getCredentialUser(String email) throws Throwable;

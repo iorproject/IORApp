@@ -347,10 +347,10 @@ public class FirebaseDao implements ReceiptsDAO{
     }
 
     @Override
-    public void rejectFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable {
-        requesterEmail = encodeString(requesterEmail);
-        receiverEmail = encodeString(receiverEmail);
-        removeFriendShipRequest(receiverEmail,requesterEmail);
+    public void rejectFriendshipRequest(String deleterEmail, String deletedEmail) throws Throwable {
+        deletedEmail = encodeString(deletedEmail);
+        deleterEmail = encodeString(deleterEmail);
+        removeFriendShipRequest(deleterEmail,deletedEmail);
     }
 
     @Override

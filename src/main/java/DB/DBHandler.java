@@ -106,8 +106,8 @@ public class DBHandler implements ReceiptsDAO{
     }
 
     @Override
-    public void rejectFriendshipRequest(String receiverEmail, String requesterEmail) throws Throwable {
-        FirebaseDao.getInstance().rejectFriendshipRequest(receiverEmail,requesterEmail);
+    public void rejectFriendshipRequest(String deleterEmail, String deletedEmail) throws Throwable {
+        FirebaseDao.getInstance().rejectFriendshipRequest(deleterEmail,deletedEmail);
     }
 
     @Override

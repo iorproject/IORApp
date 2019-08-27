@@ -24,7 +24,7 @@ public class Processor {
     public void Run(){
         init();
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.scheduleAtFixedRate(this::runAllUsers, 0, 10, TimeUnit.MINUTES);
+        service.scheduleAtFixedRate(this::runAllUsers, 0, 5, TimeUnit.MINUTES);
     }
 
     private void init() {
@@ -40,9 +40,7 @@ public class Processor {
 
     private void runAllUsers(){
         try {
-            dbHandler.getAllUsers().forEach(user -> {
-                    runUser(user);
-            });
+            dbHandler.getAllUsers().forEach(this::runUser);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -80,7 +78,7 @@ public class Processor {
         final long defaultStartTime = 1546838041821l; //07.01.19
         IEmailApiWrapper emailApiWrapper = setEmailWrapper(user);
         Date from = dbHandler.getLastSearchMailTime(user.getEmail());
-        from = from == null ? new Date(defaultStartTime) : from;
+        from = from == null ? new Date(1566248400000l) : from;
         return emailApiWrapper.getMessages(from);
     }
 

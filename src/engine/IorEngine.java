@@ -88,7 +88,7 @@ public class IorEngine {
     }
 
 
-    public static int getAmountPartners(String email) throws Throwable {
+    public static int getPartnersAmount(String email) throws Throwable {
 
         return DBHandler.getInstance().getAmountOfAccessFriendships(email);
     }
@@ -117,6 +117,11 @@ public class IorEngine {
     public static void acceptFriendship(String userEmail, String friendEmail) throws Throwable
     {
         DBHandler.getInstance().acceptFriendshipRequest(userEmail,friendEmail);
+    }
+
+    public static int getReceiptsAmount(String userEmail) throws Throwable
+    {
+        return DBHandler.getInstance().getAmountOfUserReceipts(userEmail);
     }
 
 }

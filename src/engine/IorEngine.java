@@ -6,21 +6,20 @@ import main.java.DB.Entities.Receipt;
 import main.java.DB.Entities.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class IorEngine {
 
+    public static void registerUser(User user, Date startTimeScanning) throws Throwable {
 
-    public static void registerUser(User user) throws Throwable {
-
-        DBHandler.getInstance().registerUser(user,null);
-
+        DBHandler.getInstance().registerUser(user);
+        DBHandler.getInstance().setLastSearchMailTime(user.getEmail(), startTimeScanning);
     }
 
     public static User getUserInfo(String email) throws Throwable {
 
         return DBHandler.getInstance().getCredentialUser(email);
-
     }
 
     public static List<CompanyLogo> getUserCompanies() throws Throwable {

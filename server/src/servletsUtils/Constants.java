@@ -7,5 +7,6 @@ public class Constants {
     public static final String REGISTER_DATE = "register_date";
     public static final String USER_NAME = "name";
     public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm";
+    public static final String START_TIME_SCANNING = "start_time_scanning";
     public static final int DB_ERROR_CODE = 500;
 }

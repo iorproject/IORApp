@@ -32,18 +32,22 @@ public class RegisterUserServlet extends HttpServlet {
         String accessToken = request.getParameter(Constants.ACCESS_TOKEN);
         String refreshToken = request.getParameter(Constants.REFRESH_TOKEN);
         String name = request.getParameter(Constants.USER_NAME);
-        String registerDate = request.getParameter(Constants.REGISTER_DATE);
+        String registerDateStr = request.getParameter(Constants.REGISTER_DATE);
+        String startTimeScanningStr = request.getParameter(Constants.START_TIME_SCANNING);
 
         DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
-        Date date = null;
+        Date registerDate = null;
+        Date startTimeScanning = null;
+
         try {
-            date = dateFormat.parse(registerDate);
+            registerDate = dateFormat.parse(registerDateStr);
+            startTimeScanning = dateFormat.parse(startTimeScanningStr);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         try {
-            IorEngine.registerUser(new User(email, name, accessToken, refreshToken, date));
+            IorEngine.registerUser(new User(email, name, accessToken, refreshToken, registerDate), startTimeScanning);
         }
         catch (Throwable t) {
             response.setStatus(Constants.DB_ERROR_CODE);

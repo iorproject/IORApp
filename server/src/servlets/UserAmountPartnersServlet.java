@@ -2,7 +2,6 @@ package servlets;
 
 import com.google.gson.Gson;
 import engine.IorEngine;
-import main.java.DB.Entities.Receipt;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 @WebServlet(name = "UserAmountPartnersServlet", urlPatterns = {"/userAmountPartners"})
 
@@ -26,7 +24,7 @@ public class UserAmountPartnersServlet extends HttpServlet {
 
         try {
 
-            int partners = IorEngine.getAmountPartners(email);
+            int partners = IorEngine.getPartnersAmount(email);
             String resp = new Gson().toJson(partners);
             try (PrintWriter out = response.getWriter()) {
                 out.println(resp);

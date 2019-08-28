@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "UserShareRequestsServlet", urlPatterns = {"/userFriendship/remove"})
+@WebServlet(name = "RemoveFollowerServlet", urlPatterns = {"/removeFollower/remove"})
 
-public class RemoveUserFriendship extends HttpServlet {
+public class RemoveFollower extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -19,9 +19,10 @@ public class RemoveUserFriendship extends HttpServlet {
         response.setContentType("application/json");
 
         String requesterEmail = request.getParameter("requesterEmail");
-        String receiverEmail = request.getParameter("receiverEmail");
+        String recieverEmail = request.getParameter("recieverEmail");
         try {
-            IorEngine.removeUserFriendship(requesterEmail,receiverEmail);
+           IorEngine.removeUserFriendship(requesterEmail,recieverEmail);
+           //remove signed User from friend's access Permission
         } catch (Throwable throwable) {
             response.setStatus(500);
         }

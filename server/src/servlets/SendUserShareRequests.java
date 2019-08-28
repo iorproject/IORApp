@@ -1,6 +1,7 @@
 package servlets;
 
 import engine.IorEngine;
+import main.java.DB.Entities.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,8 +17,19 @@ public class SendUserShareRequests extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) {
         String requesterEmail = request.getParameter("requesterEmail");
         String receiverEmail = request.getParameter("receiverEmail");
+        String msg;
         try {
-            IorEngine.sendUserShareRequest(receiverEmail, requesterEmail);
+            User temp = IorEngine.getUserInfo(receiverEmail);
+            if (IorEngine.getUserInfo(receiverEmail) == null)
+            {
+                response.setStatus(501);
+            }
+            else
+            {
+                IorEngine.sendUserShareRequest(receiverEmail, requesterEmail);
+                response.setStatus(502);
+            }
+
         } catch (Throwable throwable) {
             response.setStatus(500);
         }

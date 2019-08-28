@@ -18,8 +18,8 @@ public class RejectFriendshipRequests extends HttpServlet {
 
         response.setContentType("application/json");
 
-        String requesterEmail = request.getParameter("useremail");
-        String receiverEmail = request.getParameter("friendemail");
+        String receiverEmail = request.getParameter("useremail");
+        String requesterEmail = request.getParameter("friendemail");
         try {
             IorEngine.rejectUserShareRequest(receiverEmail, requesterEmail);
         } catch (Throwable throwable) {

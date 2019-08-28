@@ -13,8 +13,7 @@ public class IorEngine {
 
     public static void registerUser(User user, Date startTimeScanning) throws Throwable {
 
-        DBHandler.getInstance().registerUser(user);
-        DBHandler.getInstance().setLastSearchMailTime(user.getEmail(), startTimeScanning);
+        DBHandler.getInstance().registerUser(user, startTimeScanning);
     }
 
     public static User getUserInfo(String email) throws Throwable {

@@ -40,21 +40,23 @@ public class Processor {
 
     private void runAllUsers(){
         try {
-            dbHandler.getAllUsers().forEach(this::runUser);
+            dbHandler.getAllUsers().forEach(user -> {
+                new Thread(() -> runUser(user)).start();
+            });
+            LOGGER.log(Level.INFO, "##############runAllUsers End!!!");
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            LOGGER.log(Level.WARNING, "##############runAllUsers End!!!");
         }
     }
 
     private void runUser(User user) {
-        new Thread(() -> {
-            try{
-                checkUserMails(user);
-            } catch (Throwable throwable) {
-                LOGGER.log(Level.WARNING, throwable.getMessage());
-                throwable.printStackTrace();
-            }
-        }).run();
+        try{
+            LOGGER.log(Level.INFO, user.getEmail());
+            checkUserMails(user);
+        } catch (Throwable throwable) {
+            LOGGER.log(Level.WARNING, user.getEmail() +  " | runUser: " + throwable.getMessage());
+            throwable.printStackTrace();
+        }
     }
 
     private void checkUserMails(User user) throws Throwable {
@@ -70,7 +72,7 @@ public class Processor {
                     "***************************");
             emailRecognition.Recognize(emailMessage);
         }
-        
+
         setLastServed(messages, user, now);
     }
 
@@ -102,6 +104,7 @@ public class Processor {
             date = now;
         }
 
+        LOGGER.log(Level.INFO, "****" + user.getEmail() + "Save Date: " + date);
         dbHandler.setLastSearchMailTime(user.getEmail(), date);
     }
 }

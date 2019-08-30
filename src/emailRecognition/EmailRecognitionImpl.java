@@ -57,7 +57,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
             hostName = originalHostName;
         }
 
-        LOGGER.log(Level.INFO, "@@@@Company Name:" + hostName);
+//        LOGGER.log(Level.INFO, "@@@@Company Name:" + hostName);
         hostName = hostName.substring(0,1).toUpperCase() + hostName.substring(1);
         return Arrays.stream(excludeMails).anyMatch(hostName::equals);
     }
@@ -144,7 +144,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
     }
 
     private boolean recognizeAttachmentContent(EmailMessage emailMessage, EmailAttachment attachment) {
-        LOGGER.log(Level.INFO, "$$$$$$$$Attachment$$$$$$$");
+//        LOGGER.log(Level.INFO, "$$$$$$$$Attachment$$$$$$$");
         if(bodyRecognition.recognize(attachment.getString())){
             saveReceipt(emailMessage, eContentType.PDF, attachment.getBytes(), attachment.getName());
             return true;
@@ -153,7 +153,7 @@ public class EmailRecognitionImpl implements IEmailRecognition{
     }
 
     private void recognizeByBody(EmailMessage emailMessage) {
-        LOGGER.log(Level.INFO, "^^^^^^^^^^^Body^^^^^^^^^^^");
+        //LOGGER.log(Level.INFO, "^^^^^^^^^^^Body^^^^^^^^^^^");
         String content = emailMessage.getContent();
         if (bodyRecognition.recognize(content)) {
             saveReceipt(emailMessage, eContentType.STRING, content.getBytes(StandardCharsets.UTF_8), null);

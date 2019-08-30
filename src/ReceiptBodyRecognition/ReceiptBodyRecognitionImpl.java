@@ -70,10 +70,10 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
                     filter(content::contains).
                     findFirst().get());
             int index = content.lastIndexOf(totalIdentifier);
-            LOGGER.log(Level.WARNING, "\t $$$$$$   Identifier = " + totalIdentifier);
+//            LOGGER.log(Level.WARNING, "\t $$$$$$   Identifier = " + totalIdentifier);
             return !totalIdentifier.equals("") && findPrice(content, index);
         } catch (Exception e){
-            LOGGER.log(Level.WARNING, "\t recognizeTotal failed");
+//            LOGGER.log(Level.WARNING, "\t recognizeTotal failed");
             return false;
         }
     }
@@ -82,14 +82,14 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
         try {
             String priceExpression = PriceFinder.findPriceExpression(content, index);
             if (priceExpression == null){
-                LOGGER.log(Level.WARNING, "\t findPrice failed");
+//                LOGGER.log(Level.WARNING, "\t findPrice failed");
                 return false;
             }
             totalPrice = PriceFinder.getPriceNumber(priceExpression);
             currency = PriceFinder.getCurrency(priceExpression);
             return !currency.equals("") && totalPrice != -1;
         } catch (Exception ignored){
-            LOGGER.log(Level.WARNING, "\t findPrice Error");
+//            LOGGER.log(Level.WARNING, "\t findPrice Error");
             return false;
         }
     }
@@ -104,7 +104,7 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
                     return true;
             }
         }
-        LOGGER.log(Level.WARNING, "\t recognizeApproved failed");
+//        LOGGER.log(Level.WARNING, "\t recognizeApproved failed");
         return false;
     }
 
@@ -122,10 +122,10 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
                     stream().
                     filter(content::contains).
                     findFirst().get());
-            LOGGER.log(Level.WARNING, "\t $$$$$$   receiptNumberIdentifier = " + receiptNumberIdentifier);
+//            LOGGER.log(Level.WARNING, "\t $$$$$$   receiptNumberIdentifier = " + receiptNumberIdentifier);
             return findOneReceiptNumberMatch(content, receiptNumberIdentifier);
         } catch (Exception e){
-            LOGGER.log(Level.WARNING, "\t findReceiptNumber failed");
+//            LOGGER.log(Level.WARNING, "\t findReceiptNumber failed");
             return "";
         }
     }
@@ -138,14 +138,14 @@ public class ReceiptBodyRecognitionImpl implements IReceiptBodyRecognition {
             content = content.substring(receiptNumberIdentifier.length());
             String match = PriceFinder.getReceiptNumber(content);
             if(match != null){
-                LOGGER.log(Level.WARNING, "\t %%%%number = " +  match);
+//                LOGGER.log(Level.WARNING, "\t %%%%number = " +  match);
                 return match;
             }
             content = content.substring(receiptNumberIdentifier.length());
             index = content.indexOf(receiptNumberIdentifier);
         }
 
-        LOGGER.log(Level.WARNING, "\t findOneReceiptNumberMatch failed");
+//        LOGGER.log(Level.WARNING, "\t findOneReceiptNumberMatch failed");
         return "";
     }
 }

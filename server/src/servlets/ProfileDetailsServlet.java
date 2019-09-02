@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,12 +24,15 @@ public class ProfileDetailsServlet extends HttpServlet {
 
         response.setContentType("application/json");
         String userEmail = request.getParameter("email");
-        Map<String, Integer> profileInfo = new HashMap<>();
+        Map<String, Object> profileInfo = new HashMap<>();
 
         try {
-             profileInfo.put("partners",IorEngine.getPartnersAmount(userEmail));
+            profileInfo.put("partners",IorEngine.getPartnersAmount(userEmail));
             profileInfo.put("followers",IorEngine.getAmountFollowingMyReceipts(userEmail));
             profileInfo.put("reciepts",IorEngine.getReceiptsAmount(userEmail));
+            Date lastScan = IorEngine.getLastScanMailTime(userEmail);
+            String lastScanStr = new SimpleDateFormat("dd-MM-yyyy HH:mm a").format(lastScan);
+            profileInfo.put("lastScan", lastScanStr);
             String resp = new Gson().toJson(profileInfo);
             try (PrintWriter out = response.getWriter()) {
                 out.println(resp);

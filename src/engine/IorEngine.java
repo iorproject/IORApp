@@ -124,4 +124,9 @@ public class IorEngine {
         return DBHandler.getInstance().getAmountOfUserReceipts(userEmail);
     }
 
+    public static Date getLastScanMailTime(String email)throws Throwable {
+
+        return DBHandler.getInstance().getLastSearchMailTime(email);
+    }
+
 }
